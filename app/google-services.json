@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "856681274115",
+    "firebase_url": "https://financeplanner-6dca3.firebaseio.com",
+    "project_id": "financeplanner-6dca3",
+    "storage_bucket": "financeplanner-6dca3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856681274115:android:fd264999719e8bde",
+        "android_client_info": {
+          "package_name": "com.taracamp.financeplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856681274115-abesjv3cl4e6moi3sa7mvnt4s2taged1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfQN4AJhYUv3B86FovCH4z5Z9ws3IB76Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
