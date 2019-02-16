@@ -8,7 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.taracamp.financeplanner.MainActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.taracamp.financeplanner.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -19,6 +20,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText PasswordEditText;
     private Button LoginButton;
     private Button ToRegisterPageButton;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +55,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+
+        //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        //startActivity(intent);
     }
 
     private void openRegisterPage(){

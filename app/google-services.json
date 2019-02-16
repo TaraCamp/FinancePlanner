@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "856681274115-tqimmefkstr21nnjeje3n1c8k1o5doun.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.taracamp.financeplanner",
+            "certificate_hash": "11adace5ba8323438f873ca146008dff6c9b3db8"
+          }
+        },
+        {
           "client_id": "856681274115-abesjv3cl4e6moi3sa7mvnt4s2taged1.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856681274115-abesjv3cl4e6moi3sa7mvnt4s2taged1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

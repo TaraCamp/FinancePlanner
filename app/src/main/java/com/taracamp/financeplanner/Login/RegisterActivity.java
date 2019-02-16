@@ -8,6 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import android.support.annotation.NonNull;
+import android.widget.ProgressBar;
+
 import com.taracamp.financeplanner.MainActivity;
 import com.taracamp.financeplanner.R;
 
@@ -20,6 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText PasswordEditText;
     private Button RegisterButton;
     private Button BackToLoginPageButton;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +53,11 @@ public class RegisterActivity extends AppCompatActivity {
         this.RegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                register();
+                final String email = EmailEditText.getText().toString();
+                final String password = PasswordEditText.getText().toString();
+                if (checkValidation(email,password)){
+                    register(email,password);
+                }
             }
         });
         this.BackToLoginPageButton.setOnClickListener(new View.OnClickListener() {
@@ -53,9 +68,29 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void register(){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+    private boolean checkValidation(String email,String password){
+        //// TODO: 16.02.2019
+      return true;
+    }
+
+    private void register(String email,String password){
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.d(TAG,CLASS+".register() successful");
+
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
     }
 
     private void openLoginPage(){
@@ -63,4 +98,15 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void showProgressDialog(){
+        //// TODO: 16.02.2019  
+    }
+
+    private void hideProgressDialog(){
+        //// TODO: 16.02.2019
+    }
+
+    private void createUser(){
+
+    }
 }
