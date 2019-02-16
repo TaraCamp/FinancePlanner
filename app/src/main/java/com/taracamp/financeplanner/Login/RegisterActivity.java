@@ -8,16 +8,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import android.support.annotation.NonNull;
-import android.widget.ProgressBar;
 
+import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.MainActivity;
+import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -30,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button RegisterButton;
     private Button BackToLoginPageButton;
 
+    private FirebaseManager firebaseManager;
     private FirebaseAuth mAuth;
 
     @Override
@@ -80,14 +81,10 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Log.d(TAG,CLASS+".register() successful");
-
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
-                        }else{
-                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                            startActivity(intent);
+                            if (createUser(mAuth.getCurrentUser())){
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                            }
                         }
                     }
                 });
@@ -106,7 +103,14 @@ public class RegisterActivity extends AppCompatActivity {
         //// TODO: 16.02.2019
     }
 
-    private void createUser(){
+    private boolean createUser(FirebaseUser firebaseUser){
+        this.firebaseManager = new FirebaseManager();
 
+        User newUser = new User();
+        newUser.setToken(firebaseUser.getUid());
+        newUser.setEmail(firebaseUser.getEmail());
+        newUser.setUsername(UsernameEditeText.getText().toString());
+
+        return this.firebaseManager.saveObject(newUser);
     }
 }

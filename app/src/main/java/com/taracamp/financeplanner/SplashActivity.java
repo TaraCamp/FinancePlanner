@@ -10,7 +10,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.taracamp.financeplanner.Login.LoginActivity;
-import com.taracamp.financeplanner.Models.FirebaseManager;
+import com.taracamp.financeplanner.Core.FirebaseManager;
 
 public class SplashActivity extends AppCompatActivity {
 
