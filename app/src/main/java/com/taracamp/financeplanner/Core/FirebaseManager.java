@@ -1,6 +1,7 @@
 package com.taracamp.financeplanner.Core;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.taracamp.financeplanner.Models.User;
 
@@ -27,5 +28,10 @@ public class FirebaseManager {
             return node.save(object);
         }
         return true;
+    }
+
+    public DatabaseReference getRootReference()
+    {
+        return this.database.getReference();
     }
 }

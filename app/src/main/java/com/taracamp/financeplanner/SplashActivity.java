@@ -6,27 +6,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.taracamp.financeplanner.Login.LoginActivity;
 import com.taracamp.financeplanner.Core.FirebaseManager;
+import com.taracamp.financeplanner.Models.User;
 
 public class SplashActivity extends AppCompatActivity {
-
     private static final String TAG = "familyplan.debug";
     private static final String CLASS = "SplashActivity";
 
     private FirebaseManager firebaseManager;
-    private FirebaseUser currentUser;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         Log.d(TAG,CLASS+".onCreate()");
-        FirebaseApp.initializeApp(this);
         this.login();
     }
 
@@ -48,19 +46,30 @@ public class SplashActivity extends AppCompatActivity {
         this.firebaseManager.mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
                 Intent intent;
-                if (user!=null){
-                    loadUser();
-                    intent = new Intent(getApplicationContext(),MainActivity.class);
-                }else intent = new Intent(getApplicationContext(), LoginActivity.class);
+
+                if (firebaseAuth.getCurrentUser()!=null) intent = new Intent(getApplicationContext(), MainActivity.class);
+                else intent = new Intent(getApplicationContext(), LoginActivity.class);
 
                 startActivity(intent);
             }
         };
     }
 
-    private void loadUser(){
+    private void loadUser(final String token){
+        this.firebaseManager.getRootReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
+                if (userSnapshot.exists()){
+                    User user = userSnapshot.getValue(User.class);
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
     }
 }
