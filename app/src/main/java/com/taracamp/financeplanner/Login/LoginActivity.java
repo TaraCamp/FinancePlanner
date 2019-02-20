@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.taracamp.financeplanner.Core.FirebaseManager;
+import com.taracamp.financeplanner.Core.Message;
 import com.taracamp.financeplanner.MainActivity;
 import com.taracamp.financeplanner.R;
 
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
+                            Message.show(getApplicationContext(),"Anmeldung war erfolgreich!",Message.Mode.SUCCESS);
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                         }

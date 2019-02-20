@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         Log.d(TAG,CLASS+".onCreate()");
-        this.login();
+        this.loginFirebaseUser();
     }
 
     @Override
@@ -40,18 +40,18 @@ public class SplashActivity extends AppCompatActivity {
         this.firebaseManager.onStop();
     }
 
-    private void login(){
+    private void loginFirebaseUser(){
         this.firebaseManager = new FirebaseManager();
         this.firebaseManager.mAuth = FirebaseAuth.getInstance();
         this.firebaseManager.mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                Intent intent;
-
-                if (firebaseAuth.getCurrentUser()!=null) intent = new Intent(getApplicationContext(), MainActivity.class);
-                else intent = new Intent(getApplicationContext(), LoginActivity.class);
-
-                startActivity(intent);
+                if (firebaseAuth.getCurrentUser()!=null){
+                    loadUser(firebaseAuth.getCurrentUser().getUid());
+                } else{
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         };
     }
@@ -62,7 +62,6 @@ public class SplashActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
                 if (userSnapshot.exists()){
-                    User user = userSnapshot.getValue(User.class);
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     startActivity(intent);
                 }

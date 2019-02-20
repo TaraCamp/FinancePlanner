@@ -19,6 +19,7 @@ import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.MainActivity;
 import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
+import com.taracamp.financeplanner.Test.Dummy;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "familyplan.debug";
@@ -83,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             if (createUser(mAuth.getCurrentUser())){
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.putExtra("USERTOKEN", mAuth.getCurrentUser().getUid());
                                 startActivity(intent);
                             }
                         }
@@ -106,11 +108,14 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean createUser(FirebaseUser firebaseUser){
         this.firebaseManager = new FirebaseManager();
 
-        User newUser = new User();
-        newUser.setToken(firebaseUser.getUid());
-        newUser.setEmail(firebaseUser.getEmail());
-        newUser.setUsername(UsernameEditeText.getText().toString());
+        Dummy dummy  = new Dummy();
+        User user = dummy.generateUser(firebaseUser.getEmail(),firebaseUser.getUid());
 
-        return this.firebaseManager.saveObject(newUser);
+       // User newUser = new User();
+       //newUser.setToken(firebaseUser.getUid());
+       // newUser.setEmail(firebaseUser.getEmail());
+       // newUser.setUsername(UsernameEditeText.getText().toString());
+
+        return this.firebaseManager.saveObject(user);
     }
 }

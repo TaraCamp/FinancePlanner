@@ -1,9 +1,14 @@
 package com.taracamp.financeplanner.Models;
 
+import java.util.List;
+
 public class User {
     private String token;
     private String username;
     private String email;
+
+    private List<Transaction> transactions;
+    private List<Account> accounts;
 
     public String getToken() {
         return token;
@@ -27,5 +32,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 }
