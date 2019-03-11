@@ -3,6 +3,7 @@ package com.taracamp.financeplanner.Core;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 
 public class FirebaseManager {
@@ -23,11 +24,11 @@ public class FirebaseManager {
     }
 
     public boolean saveObject(Object object){
-        if (object instanceof User){
-            UserNode node = new UserNode(this.database.getReference("users").getRef());
-            return node.save(object);
-        }
-        return true;
+        Node node;
+        if (object instanceof User)node = new UserNode(this.database.getReference("users").getRef());
+        else if (object instanceof Transaction)node = new TransactionNode(this.database.getReference("transactions").getRef());
+        else return false;
+        return node.save(object);
     }
 
     public DatabaseReference getRootReference()
@@ -37,5 +38,10 @@ public class FirebaseManager {
 
     public DatabaseReference getUserReference(String token){
         return this.getRootReference().child("users").child(token).getRef();
+    }
+
+    public DatabaseReference getTransactionsReference(){
+        //// TODO: 11.03.2019 Muss noch implementiert werden
+        return this.getRootReference();
     }
 }

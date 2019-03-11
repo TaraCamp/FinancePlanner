@@ -1,11 +1,14 @@
 package com.taracamp.financeplanner;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
 
     private TextView TotalValueTextView;
+    private Button navigateToAddTransactionActivityButton;
 
     private FirebaseManager firebaseManager;
     private User currentUser;
@@ -42,24 +46,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG,CLASS+".onCreate()");
 
+        this._initializeControls();
+
         this.transactions = new ArrayList<>();
-
         Dummy dummy = new Dummy();
-
         this.transactions.add(dummy.getTransaction());
         this.transactions.add(dummy.getTransaction());
         this.transactions.add(dummy.getTransaction());
         this.transactions.add(dummy.getTransaction());
         this.transactions.add(dummy.getTransaction());
 
-        this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
         this.recyclerView.setHasFixedSize(true);
         this.layoutManager = new LinearLayoutManager(this);
         this.recyclerView.setLayoutManager(this.layoutManager);
         this.mAdapter = new TransactionAdapter(this.transactions);
         this.recyclerView.setAdapter(this.mAdapter);
 
-        this.loginFirebaseUser();
+        this._loginFirebaseUser();
     }
 
     @Override
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         this.firebaseManager.onStop();
     }
 
-    private void loginFirebaseUser(){
+    private void _loginFirebaseUser(){
         this.firebaseManager = new FirebaseManager();
         this.firebaseManager.mAuth = FirebaseAuth.getInstance();
         this.firebaseManager.mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -120,5 +123,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.TotalValueTextView.setText(totalValue.toString());
+    }
+
+    private void _initializeControls(){
+        this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
+        this.navigateToAddTransactionActivityButton = findViewById(R.id.navigateToAddTransactionActivityButton);
+
+        this._initializeControlEvents();
+    }
+
+    private void _initializeControlEvents(){
+        this.navigateToAddTransactionActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),AddTransactionActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

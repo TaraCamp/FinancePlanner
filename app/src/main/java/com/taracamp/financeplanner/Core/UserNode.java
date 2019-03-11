@@ -5,10 +5,12 @@ import com.taracamp.financeplanner.Models.User;
 
 public class UserNode implements Node {
     private DatabaseReference reference;
+
     public UserNode(DatabaseReference ref)
     {
         reference = ref;
     }
+
     @Override
     public boolean save(Object obj) {
         User user = (User) obj;

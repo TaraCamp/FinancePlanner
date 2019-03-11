@@ -15,7 +15,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     private List<Transaction> mDataset;
 
-
     // Provide a suitable constructor (depends on the kind of dataset)
     public TransactionAdapter(List<Transaction> myDataset) {
         mDataset = myDataset;
@@ -23,8 +22,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     // Create new views (invoked by the layout manager)
     @Override
-    public TransactionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                              int viewType) {
+    public TransactionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_card,parent,false);
 
         return new ViewHolder(view);
@@ -33,8 +31,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-
 
     }
 
