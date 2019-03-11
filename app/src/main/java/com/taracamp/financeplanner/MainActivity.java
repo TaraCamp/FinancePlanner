@@ -3,6 +3,8 @@ package com.taracamp.financeplanner;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -14,12 +16,18 @@ import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Models.Account;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
+import com.taracamp.financeplanner.Test.Dummy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "familyplan.debug";
     private static final String CLASS = "MainActivity";
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private TextView TotalValueTextView;
 
@@ -33,6 +41,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG,CLASS+".onCreate()");
+
+        this.transactions = new ArrayList<>();
+
+        Dummy dummy = new Dummy();
+
+        this.transactions.add(dummy.getTransaction());
+        this.transactions.add(dummy.getTransaction());
+        this.transactions.add(dummy.getTransaction());
+        this.transactions.add(dummy.getTransaction());
+        this.transactions.add(dummy.getTransaction());
+
+        this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
+        this.recyclerView.setHasFixedSize(true);
+        this.layoutManager = new LinearLayoutManager(this);
+        this.recyclerView.setLayoutManager(this.layoutManager);
+        this.mAdapter = new TransactionAdapter(this.transactions);
+        this.recyclerView.setAdapter(this.mAdapter);
 
         this.loginFirebaseUser();
     }

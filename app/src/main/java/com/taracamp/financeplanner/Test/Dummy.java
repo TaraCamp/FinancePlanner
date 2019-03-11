@@ -41,4 +41,12 @@ public class Dummy {
 
         return user;
     }
+
+    public Transaction getTransaction() {
+        Transaction transaction = new Transaction();
+        transaction.setToken("asdasdsadsad");
+        transaction.setName("dfdsfdsfsdf");
+        transaction.setValue(23432.0);
+        return transaction;
+    }
 }
