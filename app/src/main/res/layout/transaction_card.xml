@@ -18,7 +18,7 @@
             android:padding="5dp">
 
             <ImageView
-                android:id="@+id/imageView_taskItem"
+                android:id="@+id/transactionCardImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -29,19 +29,19 @@
                 android:src="@drawable/googleg_standard_color_18"/>
 
             <TextView
-                android:id="@+id/textview_user_username"
+                android:id="@+id/transactionNameCardTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/imageView_taskItem"
+                android:layout_toRightOf="@+id/transactionCardImageView"
                 android:text="Title"/>
 
             <TextView
-                android:id="@+id/textview_user_state"
+                android:id="@+id/transactionDescriptionCardTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textview_user_username"
-                android:layout_toRightOf="@+id/imageView_taskItem"
+                android:layout_below="@+id/transactionNameCardTextView"
+                android:layout_toRightOf="@+id/transactionCardImageView"
                 android:text="Description"/>
 
         </RelativeLayout>

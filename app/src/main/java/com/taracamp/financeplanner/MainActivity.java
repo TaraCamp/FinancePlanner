@@ -15,13 +15,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.taracamp.financeplanner.Adapters.TransactionAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Models.Account;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
-import com.taracamp.financeplanner.Test.Dummy;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseManager firebaseManager;
     private User currentUser;
-    private List<Transaction> transactions;
-    private List<Account> accounts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +43,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,CLASS+".onCreate()");
 
         this._initializeControls();
-
-        this.transactions = new ArrayList<>();
-        Dummy dummy = new Dummy();
-        this.transactions.add(dummy.getTransaction());
-        this.transactions.add(dummy.getTransaction());
-        this.transactions.add(dummy.getTransaction());
-        this.transactions.add(dummy.getTransaction());
-        this.transactions.add(dummy.getTransaction());
-
-        this.recyclerView.setHasFixedSize(true);
-        this.layoutManager = new LinearLayoutManager(this);
-        this.recyclerView.setLayoutManager(this.layoutManager);
-        this.mAdapter = new TransactionAdapter(this.transactions);
-        this.recyclerView.setAdapter(this.mAdapter);
-
         this._loginFirebaseUser();
     }
 
@@ -91,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadCurrentUser(final String token){
-
         this.firebaseManager.getRootReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -100,11 +80,8 @@ public class MainActivity extends AppCompatActivity {
                     currentUser = userSnapshot.getValue(User.class);
 
                     if (currentUser!=null){
-
-                        transactions = currentUser.getTransactions();
-                        accounts = currentUser.getAccounts();
-
-                        loadTotalValue(currentUser.getAccounts());
+                        _fillTransactionRecyclerView(currentUser.getTransactions());
+                        _loadTotalValue(currentUser.getAccounts());
                     }
                 }
             }
@@ -114,7 +91,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadTotalValue(List<Account> accounts){
+    private void _fillTransactionRecyclerView(List<Transaction> transactions){
+        this.mAdapter = new TransactionAdapter(transactions);
+        this.recyclerView.setAdapter(this.mAdapter);
+    }
+
+    private void _loadTotalValue(List<Account> accounts){
         this.TotalValueTextView = findViewById(R.id.TotalValueTextView);
 
         Double totalValue = 0.0;
@@ -128,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
     private void _initializeControls(){
         this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
         this.navigateToAddTransactionActivityButton = findViewById(R.id.navigateToAddTransactionActivityButton);
+
+        this.recyclerView.setHasFixedSize(true);
+        this.layoutManager = new LinearLayoutManager(this);
+        this.recyclerView.setLayoutManager(this.layoutManager);
 
         this._initializeControlEvents();
     }
