@@ -1,6 +1,11 @@
+/**#################################################################################################
+ * Author: Wladimir Tarasov
+ * Date: 12.03.2019
+ *################################################################################################*/
 package com.taracamp.financeplanner;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,11 +14,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Core.Message;
 import com.taracamp.financeplanner.Models.Transaction;
+import com.taracamp.financeplanner.Models.User;
 
 import java.util.Date;
+import java.util.List;
 
 public class AddTransactionActivity extends AppCompatActivity {
 
@@ -33,6 +44,8 @@ public class AddTransactionActivity extends AppCompatActivity {
     private Button addTransactionButton;
     private Button closeAddTransactionActivityButton;
 
+    private User currentUser;
+    private List<Transaction> transactions;
     private FirebaseManager firebaseManager;
 
     /**#############################################################################################
@@ -43,9 +56,20 @@ public class AddTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
 
-        this.firebaseManager = new FirebaseManager();
-
+        this._loginFirebaseUser();
         this._initializeControls();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        this.firebaseManager.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.firebaseManager.onStop();
     }
 
     /**#############################################################################################
@@ -68,14 +92,6 @@ public class AddTransactionActivity extends AppCompatActivity {
         this._initializeControlEvents();
     }
 
-    private void _insertTransaction(Transaction transaction){
-        if(this.firebaseManager.saveObject(transaction)){
-            Message.show(getApplicationContext(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(intent);
-        }
-    }
-
     private Transaction _createTransaction(){
         // Neue Transaktion wird erstellt
         Transaction newTransaction = new Transaction();
@@ -91,12 +107,56 @@ public class AddTransactionActivity extends AppCompatActivity {
     }
 
     private void _navigateToPreviousActivity(){
-        //// TODO: 11.03.2019  Muss implementiert werden
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void _addTransactionToFirebaseDatabase(){
+        Transaction newTransaction = this._createTransaction();
+        boolean isTransactionValid = this._checkTransactionValidation(newTransaction);
+        if(isTransactionValid){
+            this.transactions.add(newTransaction);
+            this.currentUser.setTransactions(this.transactions);
+            if(this.firebaseManager.saveObject(this.currentUser)){
+                Message.show(getApplicationContext(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        }
     }
 
     private boolean _checkTransactionValidation(Transaction transaction){
         //// TODO: 11.03.2019 Muss noch implementiert werden
         return true;
+    }
+
+    private void _loginFirebaseUser(){
+        this.firebaseManager = new FirebaseManager();
+        this.firebaseManager.mAuth = FirebaseAuth.getInstance();
+        this.firebaseManager.mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser()!=null){
+                    _loadCurrentUser(firebaseAuth.getCurrentUser().getUid());
+                }
+            }
+        };
+    }
+
+    private void _loadCurrentUser(final String token){
+        this.firebaseManager.getRootReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
+                if (userSnapshot.exists()){
+                    currentUser = userSnapshot.getValue(User.class);
+                    if (currentUser!=null) transactions = currentUser.getTransactions();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
     }
 
     /**#############################################################################################
@@ -106,11 +166,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         this.addTransactionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
-                Transaction newTransaction = _createTransaction();
-                boolean isTransactionValid = _checkTransactionValidation(newTransaction);
-                if(isTransactionValid)_insertTransaction(newTransaction);
-                */
+                _addTransactionToFirebaseDatabase();
             }
         });
         this.closeAddTransactionActivityButton.setOnClickListener(new View.OnClickListener() {

@@ -36,12 +36,4 @@ public class FirebaseManager {
         return this.database.getReference();
     }
 
-    public DatabaseReference getUserReference(String token){
-        return this.getRootReference().child("users").child(token).getRef();
-    }
-
-    public DatabaseReference getTransactionsReference(){
-        //// TODO: 11.03.2019 Muss noch implementiert werden
-        return this.getRootReference();
-    }
 }
