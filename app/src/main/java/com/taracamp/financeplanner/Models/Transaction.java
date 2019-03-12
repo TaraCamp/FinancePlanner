@@ -10,6 +10,7 @@ public class Transaction {
     private Double value;
     private boolean transactionForecast;
     private Date transactionDate;
+    private TransactionTypeEntry transactionType;
 
     public String getToken() {
         return token;
@@ -65,5 +66,13 @@ public class Transaction {
 
     public void setTransactionForecast(boolean transactionForecast) {
         this.transactionForecast = transactionForecast;
+    }
+
+    public TransactionTypeEntry getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionTypeEntry transactionType) {
+        this.transactionType = transactionType;
     }
 }

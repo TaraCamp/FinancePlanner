@@ -102,6 +102,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         newTransaction.setValue(Double.parseDouble(this.transactionValueEditText.getText().toString()));
         newTransaction.setTransactionDate(new Date());
         newTransaction.setTransactionForecast(this.transactionForecastToggleButton.getKeepScreenOn());
+        newTransaction.setTransactionType(null);
 
         return newTransaction;
     }

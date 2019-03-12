@@ -9,6 +9,7 @@ public class User {
 
     private List<Transaction> transactions;
     private List<Account> accounts;
+    private List<TransactionTypeEntry> transactionTypeEntries;
 
     public String getToken() {
         return token;
@@ -48,5 +49,13 @@ public class User {
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public List<TransactionTypeEntry> getTransactionTypeEntries() {
+        return transactionTypeEntries;
+    }
+
+    public void setTransactionTypeEntries(List<TransactionTypeEntry> transactionTypeEntries) {
+        this.transactionTypeEntries = transactionTypeEntries;
     }
 }

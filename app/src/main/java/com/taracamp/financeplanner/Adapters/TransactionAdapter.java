@@ -38,9 +38,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         //ImageView transactionCardImageView = holder.transactionCardImageView;
         TextView transactionNameCardTextView = holder.transactionNameCardTextView;
         TextView transactionDescriptionCardTextView = holder.transactionDescriptionCardTextView;
+        TextView transactionValueCardTextView = holder.transactionValueCardTextView;
 
-        transactionNameCardTextView.setText(transaction.getName());
-        transactionDescriptionCardTextView.setText(transaction.getValue().toString());
+        if (transaction.getName()!=null)transactionNameCardTextView.setText(transaction.getName());
+        if (transaction.getTransactionDate()!=null)transactionDescriptionCardTextView.setText(transaction.getTransactionDate().toString());
+        if (transaction.getValue()!=null)transactionValueCardTextView.setText(transaction.getValue().toString());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +65,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private ImageView transactionCardImageView;
         private TextView transactionNameCardTextView;
         private TextView transactionDescriptionCardTextView;
+        private TextView transactionValueCardTextView;
 
         public ViewHolder(View itemView)
         {
@@ -71,6 +74,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             this.transactionCardImageView = itemView.findViewById(R.id.transactionCardImageView);
             this.transactionNameCardTextView = itemView.findViewById(R.id.transactionNameCardTextView);
             this.transactionDescriptionCardTextView = itemView.findViewById(R.id.transactionDescriptionCardTextView);
+            this.transactionValueCardTextView = itemView.findViewById(R.id.transactionValueCardTextView);
         }
     }
 }

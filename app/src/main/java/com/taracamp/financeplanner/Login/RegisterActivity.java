@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.MainActivity;
+import com.taracamp.financeplanner.Models.TransactionTypeEntryGenerator;
 import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
 import com.taracamp.financeplanner.Test.Dummy;
@@ -110,11 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         Dummy dummy  = new Dummy();
         User user = dummy.generateUser(firebaseUser.getEmail(),firebaseUser.getUid());
-
-       // User newUser = new User();
-       //newUser.setToken(firebaseUser.getUid());
-       // newUser.setEmail(firebaseUser.getEmail());
-       // newUser.setUsername(UsernameEditeText.getText().toString());
+        user.setTransactionTypeEntries(TransactionTypeEntryGenerator.generate());
 
         return this.firebaseManager.saveObject(user);
     }
