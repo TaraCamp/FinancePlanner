@@ -9,7 +9,7 @@ public class User {
 
     private List<Transaction> transactions;
     private List<Account> accounts;
-    private List<TransactionTypeEntry> transactionTypeEntries;
+    private List<TransactionCategory> transactionTypeEntries;
 
     public String getToken() {
         return token;
@@ -51,11 +51,11 @@ public class User {
         this.accounts = accounts;
     }
 
-    public List<TransactionTypeEntry> getTransactionTypeEntries() {
+    public List<TransactionCategory> getTransactionTypeEntries() {
         return transactionTypeEntries;
     }
 
-    public void setTransactionTypeEntries(List<TransactionTypeEntry> transactionTypeEntries) {
+    public void setTransactionTypeEntries(List<TransactionCategory> transactionTypeEntries) {
         this.transactionTypeEntries = transactionTypeEntries;
     }
 }

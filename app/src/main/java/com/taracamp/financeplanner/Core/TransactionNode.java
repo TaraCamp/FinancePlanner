@@ -13,8 +13,6 @@ public class TransactionNode implements Node {
 
     @Override
     public boolean save(Object object) {
-        Transaction transaction = (Transaction) object;
-        reference.child(transaction.getToken()).setValue(transaction);
         return true;
     }
 

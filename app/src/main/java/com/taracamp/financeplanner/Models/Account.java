@@ -1,31 +1,51 @@
 package com.taracamp.financeplanner.Models;
 
+import java.util.Date;
+
 public class Account {
-    private String token;
-    private Double value;
-    private String name;
+    private Double accountValue;
+    private String accountName;
+    private String accountDescription;
+    private Date accoutCreateDate;
+    private String accountType;
 
-    public String getToken() {
-        return token;
+    public Double getAccountValue() {
+        return accountValue;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAccountValue(Double accountValue) {
+        this.accountValue = accountValue;
     }
 
-    public Double getValue() {
-        return value;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
-    public String getName() {
-        return name;
+    public String getAccountDescription() {
+        return accountDescription;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAccountDescription(String accountDescription) {
+        this.accountDescription = accountDescription;
+    }
+
+    public Date getAccoutCreateDate() {
+        return accoutCreateDate;
+    }
+
+    public void setAccoutCreateDate(Date accoutCreateDate) {
+        this.accoutCreateDate = accoutCreateDate;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
     }
 }

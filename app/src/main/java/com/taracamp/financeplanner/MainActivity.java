@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         Double totalValue = 0.0;
         for(Account account: accounts){
-            totalValue = totalValue + account.getValue();
+            totalValue = totalValue + account.getAccountValue();
         }
 
         this.TotalValueTextView.setText(totalValue.toString());

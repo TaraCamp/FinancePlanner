@@ -6,13 +6,13 @@ package com.taracamp.financeplanner;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.widget.Spinner;
+import android.widget.Switch;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,18 +31,15 @@ public class AddTransactionActivity extends AppCompatActivity {
     /**#############################################################################################
      * Controls
      *############################################################################################*/
-    private TextView transactionNameTextView;
-    private EditText transactionNameEditText;
-    private TextView accountFromTextView;
-    private EditText accountFromEditText;
-    private TextView accountToTextView;
-    private EditText accountToEditText;
-    private TextView transactionValueTextView;
-    private EditText transactionValueEditText;
-    private TextView transactionForecastTextView;
-    private ToggleButton transactionForecastToggleButton;
+    private TextInputEditText addTransactionNameTextInputEditText;
+    private TextInputEditText addTransactionDescriptionTextInputEditText;
+    private TextInputEditText addTransactionValueTextInputEditText;
+    private Spinner addTransactionFromAccountSpinner;
+    private Spinner addTransactionToAccountSpinner;
+    private Spinner addTransactionTypeSpinner;
+    private Switch addTransactionForcastSwitch;
     private Button addTransactionButton;
-    private Button closeAddTransactionActivityButton;
+    private Button addTransactionCancelButton;
 
     private User currentUser;
     private List<Transaction> transactions;
@@ -63,57 +60,65 @@ public class AddTransactionActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        this.firebaseManager.onStart();
+        if (this.firebaseManager != null) this.firebaseManager.onStart();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        this.firebaseManager.onStop();
+        if (this.firebaseManager != null) this.firebaseManager.onStop();
+    }
+
+
+    /**#############################################################################################
+     * Events
+     *############################################################################################*/
+    private void _initializeControlEvents(){
+        this.addTransactionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _addTransactionToFirebaseDatabase();
+            }
+        });
+        this.addTransactionCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _navigateToPreviousActivity();
+            }
+        });
     }
 
     /**#############################################################################################
      * Private Methoden
      *############################################################################################*/
     private void _initializeControls(){
-        this.transactionNameTextView = findViewById(R.id.transactionNameTextView);
-        this.transactionNameEditText = findViewById(R.id.transactionNameEditText);
-        this.accountFromTextView = findViewById(R.id.accountFromTextView);
-        this.accountFromEditText = findViewById(R.id.accountFromEditText);
-        this.accountToTextView = findViewById(R.id.accountToTextView);
-        this.accountToEditText = findViewById(R.id.accountToEditText);
-        this.transactionValueTextView = findViewById(R.id.transactionValueTextView);
-        this.transactionValueEditText = findViewById(R.id.transactionValueEditText);
-        this.transactionForecastTextView = findViewById(R.id.transactionForecastTextView);
-        this.transactionForecastToggleButton = findViewById(R.id.transactionForecastToggleButton);
+        this.addTransactionNameTextInputEditText = findViewById(R.id.addTransactionNameTextInputEditText);
+        this.addTransactionDescriptionTextInputEditText = findViewById(R.id.addTransactionDescriptionTextInputEditText);
+        this.addTransactionValueTextInputEditText = findViewById(R.id.addTransactionValueTextInputEditText);
+        this.addTransactionFromAccountSpinner = findViewById(R.id.addTransactionFromAccountSpinner);
+        this.addTransactionToAccountSpinner = findViewById(R.id.addTransactionToAccountSpinner);
+        this.addTransactionTypeSpinner = findViewById(R.id.addTransactionTypeSpinner);
+        this.addTransactionForcastSwitch = findViewById(R.id.addTransactionForcastSwitch);
         this.addTransactionButton = findViewById(R.id.addTransactionButton);
-        this.closeAddTransactionActivityButton = findViewById(R.id.closeAddTransactionActivityButton);
+        this.addTransactionCancelButton = findViewById(R.id.addTransactionCancelButton);
 
         this._initializeControlEvents();
     }
 
-    private Transaction _createTransaction(){
-        // Neue Transaktion wird erstellt
-        Transaction newTransaction = new Transaction();
-        newTransaction.setToken(null);
-        newTransaction.setName(this.transactionNameEditText.getText().toString());
-        newTransaction.setAccountFrom(null);
-        newTransaction.setAccountTo(null);
-        newTransaction.setValue(Double.parseDouble(this.transactionValueEditText.getText().toString()));
-        newTransaction.setTransactionDate(new Date());
-        newTransaction.setTransactionForecast(this.transactionForecastToggleButton.getKeepScreenOn());
-        newTransaction.setTransactionType(null);
+    private void _enableTransferMode(boolean isEnable){
 
-        return newTransaction;
     }
 
-    private void _navigateToPreviousActivity(){
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        startActivity(intent);
+    private void _enablePositiveMode(boolean isEnable){
+
+    }
+
+    private void _enableNegativeMode(boolean isEnable){
+
     }
 
     private void _addTransactionToFirebaseDatabase(){
-        Transaction newTransaction = this._createTransaction();
+        Transaction newTransaction = this._generateTransaction();
         boolean isTransactionValid = this._checkTransactionValidation(newTransaction);
         if(isTransactionValid){
             this.transactions.add(newTransaction);
@@ -124,6 +129,27 @@ public class AddTransactionActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+    }
+
+    private Transaction _generateTransaction(){
+        Transaction newTransaction = new Transaction();
+        newTransaction.setTransactionName(this.addTransactionNameTextInputEditText.getText().toString());
+        newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
+        newTransaction.setTransactionDate(null);
+        newTransaction.setTransactionCreateDate(new Date());
+        newTransaction.setTransactionFromAccount(null);
+        newTransaction.setTransactionToAccount(null);
+        newTransaction.setTransactionType("NOTHING");
+        newTransaction.setTransactionDescription(this.addTransactionDescriptionTextInputEditText.getText().toString());
+        newTransaction.setTransactionForecast(this.addTransactionForcastSwitch.isActivated());
+        newTransaction.setTransactionCategory(null);
+
+        return newTransaction;
+    }
+
+    private void _navigateToPreviousActivity(){
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
     }
 
     private boolean _checkTransactionValidation(Transaction transaction){
@@ -160,21 +186,4 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
     }
 
-    /**#############################################################################################
-     * Events
-     *############################################################################################*/
-    private void _initializeControlEvents(){
-        this.addTransactionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _addTransactionToFirebaseDatabase();
-            }
-        });
-        this.closeAddTransactionActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _navigateToPreviousActivity();
-            }
-        });
-    }
 }

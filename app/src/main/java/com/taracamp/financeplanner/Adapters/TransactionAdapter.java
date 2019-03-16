@@ -40,9 +40,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         TextView transactionDescriptionCardTextView = holder.transactionDescriptionCardTextView;
         TextView transactionValueCardTextView = holder.transactionValueCardTextView;
 
-        if (transaction.getName()!=null)transactionNameCardTextView.setText(transaction.getName());
+        if (transaction.getTransactionName()!=null)transactionNameCardTextView.setText(transaction.getTransactionName());
         if (transaction.getTransactionDate()!=null)transactionDescriptionCardTextView.setText(transaction.getTransactionDate().toString());
-        if (transaction.getValue()!=null)transactionValueCardTextView.setText(transaction.getValue().toString());
+        if (transaction.getTransactionValue()!=null)transactionValueCardTextView.setText(transaction.getTransactionValue().toString());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
