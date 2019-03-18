@@ -1,3 +1,7 @@
+/**#################################################################################################
+ * Author: Wladimir Tarasov
+ * Date: 18.03.2019
+ *################################################################################################*/
 package com.taracamp.financeplanner;
 
 import android.content.Intent;
@@ -26,23 +30,28 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "familyplan.debug";
     private static final String CLASS = "MainActivity";
 
+    /**#############################################################################################
+     * Controls
+     *############################################################################################*/
+    private TextView TotalValueTextView;
+    private Button navigateToAddTransactionActivityButton;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    private TextView TotalValueTextView;
-    private Button navigateToAddTransactionActivityButton;
-
     private FirebaseManager firebaseManager;
     private User currentUser;
 
+    /**#############################################################################################
+     * Lifecycles
+     *############################################################################################*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG,CLASS+".onCreate()");
 
-        this._initializeControls();
         this._loginFirebaseUser();
     }
 
@@ -58,6 +67,34 @@ public class MainActivity extends AppCompatActivity {
         this.firebaseManager.onStop();
     }
 
+    /**#############################################################################################
+     * Events
+     *############################################################################################*/
+    private void _initializeControlEvents(){
+        this.navigateToAddTransactionActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),AddTransactionActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**#############################################################################################
+     * Private Methoden
+     *############################################################################################*/
+    private void _initializeControls(){
+        this.TotalValueTextView = findViewById(R.id.TotalValueTextView);
+        this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
+        this.navigateToAddTransactionActivityButton = findViewById(R.id.navigateToAddTransactionActivityButton);
+
+        this.recyclerView.setHasFixedSize(true);
+        this.layoutManager = new LinearLayoutManager(this);
+        this.recyclerView.setLayoutManager(this.layoutManager);
+
+        this._initializeControlEvents();
+    }
+
     private void _loginFirebaseUser(){
         this.firebaseManager = new FirebaseManager();
         this.firebaseManager.mAuth = FirebaseAuth.getInstance();
@@ -65,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser()!=null){
-                    loadCurrentUser(firebaseAuth.getCurrentUser().getUid());
+                    _setUser(firebaseAuth.getCurrentUser().getUid());
                 }
             }
         };
     }
 
-    private void loadCurrentUser(final String token){
+    private void _setUser(final String token){
         this.firebaseManager.getRootReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -80,8 +117,9 @@ public class MainActivity extends AppCompatActivity {
                     currentUser = userSnapshot.getValue(User.class);
 
                     if (currentUser!=null){
+                        _initializeControls();
                         _fillTransactionRecyclerView(currentUser.getTransactions());
-                        _loadTotalValue(currentUser.getAccounts());
+                        TotalValueTextView.setText(_getTotalValue(currentUser.getAccounts()));
                     }
                 }
             }
@@ -96,35 +134,10 @@ public class MainActivity extends AppCompatActivity {
         this.recyclerView.setAdapter(this.mAdapter);
     }
 
-    private void _loadTotalValue(List<Account> accounts){
-        this.TotalValueTextView = findViewById(R.id.TotalValueTextView);
-
+    private String _getTotalValue(List<Account> accounts){
         Double totalValue = 0.0;
-        for(Account account: accounts){
-            totalValue = totalValue + account.getAccountValue();
-        }
-
-        this.TotalValueTextView.setText(totalValue.toString());
+        for(Account account: accounts)totalValue = totalValue + account.getAccountValue();
+        return totalValue.toString();
     }
 
-    private void _initializeControls(){
-        this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
-        this.navigateToAddTransactionActivityButton = findViewById(R.id.navigateToAddTransactionActivityButton);
-
-        this.recyclerView.setHasFixedSize(true);
-        this.layoutManager = new LinearLayoutManager(this);
-        this.recyclerView.setLayoutManager(this.layoutManager);
-
-        this._initializeControlEvents();
-    }
-
-    private void _initializeControlEvents(){
-        this.navigateToAddTransactionActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),AddTransactionActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -55,6 +56,7 @@ public class AddTransactionActivity extends AppCompatActivity {
     private FirebaseManager firebaseManager;
 
     private String transactionTypeSelectedValue;
+    private boolean isForecastEnabled = false;
 
     /**#############################################################################################
      * Lifecycles
@@ -84,16 +86,18 @@ public class AddTransactionActivity extends AppCompatActivity {
      * Events
      *############################################################################################*/
     private void _initializeControlEvents(){
+
         this.addTransactionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _addTransactionToFirebaseDatabase();
             }
         });
+
         this.addTransactionCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _navigateToPreviousActivity();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
             }
         });
 
@@ -107,6 +111,13 @@ public class AddTransactionActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 transactionTypeSelectedValue = "POSITIVE";
+            }
+        });
+
+        this.addTransactionForcastSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isForecastEnabled = isChecked;
             }
         });
     }
@@ -148,6 +159,20 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
     }
 
+    private void _addTransactionToFirebaseDatabase(){
+        Transaction newTransaction = this._createTransaction();
+        if(this._checkTransactionValidation(newTransaction)){
+            this.transactions.add(newTransaction);
+            this.currentUser.setTransactions(this.transactions);
+            this._changeAccountValueByTransaction(newTransaction);
+            this.currentUser.setAccounts(this.accounts);
+            if(this.firebaseManager.saveObject(this.currentUser)){
+                Message.show(getApplicationContext(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            }
+        }
+    }
+
     private void _initializeControls(){
         this.addTransactionNameTextInputEditText = findViewById(R.id.addTransactionNameTextInputEditText);
         this.addTransactionDescriptionTextInputEditText = findViewById(R.id.addTransactionDescriptionTextInputEditText);
@@ -183,20 +208,6 @@ public class AddTransactionActivity extends AppCompatActivity {
         addTransactionToAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
 
-    private void _addTransactionToFirebaseDatabase(){
-        Transaction newTransaction = this._createTransaction();
-        boolean isTransactionValid = this._checkTransactionValidation(newTransaction);
-        if(isTransactionValid){
-            this.transactions.add(newTransaction);
-            this.currentUser.setTransactions(this.transactions);
-            if(this.firebaseManager.saveObject(this.currentUser)){
-                Message.show(getApplicationContext(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
-            }
-        }
-    }
-
     private Transaction _createTransaction(){
         Transaction newTransaction = new Transaction();
 
@@ -204,19 +215,16 @@ public class AddTransactionActivity extends AppCompatActivity {
         newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
         newTransaction.setTransactionDate(new Date());
         newTransaction.setTransactionCreateDate(new Date());
-        newTransaction.setTransactionFromAccount(accounts.get(this.addTransactionFromAccountSpinner.getSelectedItemPosition())); // get from sspinner
-        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition())); //get from spinner
+        newTransaction.setTransactionFromAccount(accounts.get(this.addTransactionFromAccountSpinner.getSelectedItemPosition()));
+        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
         newTransaction.setTransactionType(this.transactionTypeSelectedValue); // Get from spinner
         newTransaction.setTransactionDescription(this.addTransactionDescriptionTextInputEditText.getText().toString());
-        newTransaction.setTransactionForecast(false); // // TODO: 17.03.2019  Muss noch behoben werden
+
+        newTransaction.setTransactionForecast(isForecastEnabled);
+
         newTransaction.setTransactionCategory(null);
 
         return newTransaction;
-    }
-
-    private void _navigateToPreviousActivity(){
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        startActivity(intent);
     }
 
     private boolean _checkTransactionValidation(Transaction transaction){
@@ -224,8 +232,40 @@ public class AddTransactionActivity extends AppCompatActivity {
         return true;
     }
 
+    private void _changeAccountValueByTransaction(Transaction transaction){
+        Account toAccount,fromAccount;
+        switch (transaction.getTransactionType()){
+            case "POSITIVE":{
+                toAccount = transaction.getTransactionToAccount();
+                Double oldValue = toAccount.getAccountValue();
+                toAccount.setAccountValue(oldValue + transaction.getTransactionValue());
 
+                this.accounts.set(this.addTransactionToAccountSpinner.getSelectedItemPosition(),toAccount);
+                break;
+            }
+            case "NEGATIVE":{
+                fromAccount = transaction.getTransactionFromAccount();
+                Double oldValue = fromAccount.getAccountValue();
+                fromAccount.setAccountValue(oldValue - transaction.getTransactionValue());
 
+                int position = this.addTransactionFromAccountSpinner.getSelectedItemPosition();
+                this.accounts.set(position,fromAccount);
+                break;
+            }
+            case "NEUTRAL":{
+                fromAccount = transaction.getTransactionFromAccount();
+                toAccount = transaction.getTransactionToAccount();
 
+                Double oldFromAccountValue = fromAccount.getAccountValue();
+                Double oldToAccountValue = toAccount.getAccountValue();
 
+                fromAccount.setAccountValue(oldFromAccountValue - transaction.getTransactionValue());
+                toAccount.setAccountValue(oldToAccountValue + transaction.getTransactionValue());
+
+                this.accounts.set(this.addTransactionFromAccountSpinner.getSelectedItemPosition(),fromAccount);
+                this.accounts.set(this.addTransactionToAccountSpinner.getSelectedItemPosition(),toAccount);
+                break;
+            }
+        }
+    }
 }
