@@ -5,6 +5,7 @@
 package com.taracamp.financeplanner;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,12 @@ import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Models.Account;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "familyplan.debug";
@@ -74,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
         this.navigateToAddTransactionActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),AddTransactionActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(getApplicationContext(),AddTransactionActivity.class));
             }
         });
     }
@@ -115,11 +120,14 @@ public class MainActivity extends AppCompatActivity {
                 DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
                 if (userSnapshot.exists()){
                     currentUser = userSnapshot.getValue(User.class);
-
                     if (currentUser!=null){
                         _initializeControls();
+                        Collections.reverse(currentUser.getTransactions());
                         _fillTransactionRecyclerView(currentUser.getTransactions());
-                        TotalValueTextView.setText(_getTotalValue(currentUser.getAccounts()));
+                        Double totalValue = _getTotalValue(currentUser.getAccounts());
+                        _setTextViewColor(TotalValueTextView,totalValue);
+                        TotalValueTextView.setText("");
+                        TotalValueTextView.setText(totalValue.toString() + "\u20ac");
                     }
                 }
             }
@@ -134,10 +142,14 @@ public class MainActivity extends AppCompatActivity {
         this.recyclerView.setAdapter(this.mAdapter);
     }
 
-    private String _getTotalValue(List<Account> accounts){
+    private Double _getTotalValue(List<Account> accounts){
         Double totalValue = 0.0;
         for(Account account: accounts)totalValue = totalValue + account.getAccountValue();
-        return totalValue.toString();
+        return totalValue;
     }
 
+    private void _setTextViewColor(TextView control, Double totalValue){
+        if (totalValue>0)control.setTextColor(Color.rgb(0,200,0));
+        else control.setTextColor(Color.rgb(200,0,0));
+    }
 }
