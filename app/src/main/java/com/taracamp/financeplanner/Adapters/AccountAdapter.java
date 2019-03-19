@@ -4,6 +4,8 @@
  *################################################################################################*/
 package com.taracamp.financeplanner.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.taracamp.financeplanner.Core.Message;
+import com.taracamp.financeplanner.AccountDetailActivity;
+import com.taracamp.financeplanner.AccountsActivity;
 import com.taracamp.financeplanner.Models.Account;
 import com.taracamp.financeplanner.R;
 
@@ -24,11 +27,14 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
      * Properties
      *############################################################################################*/
     private List<Account> accounts;
+    private Context parentContext;
+    private AccountsActivity parentActivity;
 
     /**#############################################################################################
      * Constructor
      *############################################################################################*/
-    public AccountAdapter(List<Account> myDataset) {
+    public AccountAdapter(Context context,List<Account> myDataset) {
+        this.parentContext = context;
         this.accounts = myDataset;
     }
 
@@ -42,7 +48,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         Account account = this.accounts.get(position);
 
         //ImageView accountCardImageView = holder.accountCardImageView;
@@ -60,7 +66,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message.show(v.getContext(),"Konto Klick", Message.Mode.SUCCESS);
+                Intent intent = new Intent(parentContext.getApplicationContext(), AccountDetailActivity.class);
+                intent.putExtra("POSITION",position);
+                parentContext.startActivity(intent);
             }
         });
     }

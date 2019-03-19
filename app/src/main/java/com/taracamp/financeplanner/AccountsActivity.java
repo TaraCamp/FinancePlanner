@@ -119,7 +119,7 @@ public class AccountsActivity extends AppCompatActivity {
      *############################################################################################*/
     private void _loadData(User currentUser){
         this._initializeControls();
-        this.mAdapter = new AccountAdapter(currentUser.getAccounts());
+        this.mAdapter = new AccountAdapter(getApplicationContext(),currentUser.getAccounts());
         this.accountsRecyclerView.setAdapter(this.mAdapter);
     }
 
