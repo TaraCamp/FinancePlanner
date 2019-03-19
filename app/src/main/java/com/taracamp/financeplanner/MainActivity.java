@@ -27,10 +27,7 @@ import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "familyplan.debug";
@@ -41,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
      *############################################################################################*/
     private TextView TotalValueTextView;
     private Button navigateToAddTransactionActivityButton;
+    private Button navigateToAccountsActivityButton;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -83,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(),AddTransactionActivity.class));
             }
         });
+        this.navigateToAccountsActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),AccountsActivity.class));
+            }
+        });
     }
 
     /**#############################################################################################
@@ -92,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         this.TotalValueTextView = findViewById(R.id.TotalValueTextView);
         this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
         this.navigateToAddTransactionActivityButton = findViewById(R.id.navigateToAddTransactionActivityButton);
-
+        this.navigateToAccountsActivityButton = findViewById(R.id.navigateToAccountsActivityButton);
         this.recyclerView.setHasFixedSize(true);
         this.layoutManager = new LinearLayoutManager(this);
         this.recyclerView.setLayoutManager(this.layoutManager);
