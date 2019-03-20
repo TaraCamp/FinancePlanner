@@ -219,9 +219,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
         newTransaction.setTransactionType(this.transactionTypeSelectedValue); // Get from spinner
         newTransaction.setTransactionDescription(this.addTransactionDescriptionTextInputEditText.getText().toString());
-
         newTransaction.setTransactionForecast(isForecastEnabled);
-
         newTransaction.setTransactionCategory(null);
 
         return newTransaction;

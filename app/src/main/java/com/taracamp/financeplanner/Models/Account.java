@@ -8,6 +8,7 @@ public class Account {
     private String accountDescription;
     private Date accoutCreateDate;
     private String accountType;
+    private boolean accountRecordToValue;
 
     public Double getAccountValue() {
         return accountValue;
@@ -47,5 +48,13 @@ public class Account {
 
     public void setAccountType(String accountType) {
         this.accountType = accountType;
+    }
+
+    public boolean isAccountRecordToValue() {
+        return accountRecordToValue;
+    }
+
+    public void setAccountRecordToValue(boolean accountRecordToValue) {
+        this.accountRecordToValue = accountRecordToValue;
     }
 }
