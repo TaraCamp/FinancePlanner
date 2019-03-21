@@ -1,16 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AccountDetailActivity">
+    android:padding="16dp"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/accountDetailTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="152dp"
-        tools:layout_editor_absoluteY="122dp" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Konto Typ" />
+
+        <Spinner
+            android:id="@+id/detailAccountTypeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:errorEnabled="true">
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Konto Name"
+            android:inputType="text"
+            android:id="@+id/detailAccountNameTextInputEditText"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:errorEnabled="true">
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Beschreibung (Optional)"
+            android:inputType="text"
+            android:id="@+id/detailAccountDescriptionTextInputEditText"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:errorEnabled="true">
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Wert eingeben"
+            android:inputType="numberDecimal"
+            android:id="@+id/detailAccountValueTextInputEditText"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Switch
+        android:id="@+id/detailAccountRecordToValueSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="In Berechnung aufnehmen" />
+
+    <Button
+        android:id="@+id/changeAccountButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Ändern" />
+
+</LinearLayout>
