@@ -10,6 +10,8 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -22,8 +24,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Core.Message;
 import com.taracamp.financeplanner.Models.Account;
+import com.taracamp.financeplanner.Models.AccountTypeValueHelper;
+import com.taracamp.financeplanner.Models.Enums.AccountTypeEnum;
 import com.taracamp.financeplanner.Models.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +50,7 @@ public class AddAccountActivity extends AppCompatActivity {
     private User currentUser;
     private FirebaseManager firebaseManager;
     private boolean isRecordToValueEnabled = false;
+    private String accountTypeSelectedValue;
     private List<Account> accounts;
 
     /**#############################################################################################
@@ -83,6 +89,18 @@ public class AddAccountActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isRecordToValueEnabled = isChecked;
+            }
+        });
+        this.addAccountTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                AccountTypeValueHelper accountTypeValueHelper = (AccountTypeValueHelper) parent.getSelectedItem();
+                accountTypeSelectedValue = accountTypeValueHelper.getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                accountTypeSelectedValue = "MAIN";
             }
         });
     }
@@ -137,6 +155,7 @@ public class AddAccountActivity extends AppCompatActivity {
     private void _loadData(User currentUser){
         this._initializeControls();
         this.accounts = currentUser.getAccounts();
+        this._loadAccountTypeSpinner();
     }
 
     private void _addAccount(){
@@ -157,12 +176,30 @@ public class AddAccountActivity extends AppCompatActivity {
         account.setAccountDescription(this.addAccountDescriptionTextInputEditText.getText().toString());
         account.setAccountValue(Double.parseDouble(addAccountValueTextInputEditText.getText().toString()));
         account.setAccoutCreateDate(new Date());
-        account.setAccountType("MAIN");
+        account.setAccountType(this.accountTypeSelectedValue);
         account.setAccountRecordToValue(isRecordToValueEnabled);
         return account;
     }
 
     private boolean _checkAccount(Account account){
         return true;
+    }
+
+    private List<AccountTypeValueHelper> _getAccountTypeList(){
+        ArrayList<AccountTypeValueHelper> accountTypeValueHelpers = new ArrayList<>();
+        accountTypeValueHelpers.add(new AccountTypeValueHelper(AccountTypeEnum.MAIN.toString(),"Hauptkonto"));
+        accountTypeValueHelpers.add(new AccountTypeValueHelper(AccountTypeEnum.ONLINE.toString(),"Online Konto"));
+        accountTypeValueHelpers.add(new AccountTypeValueHelper(AccountTypeEnum.BET.toString(),"Wettkonto"));
+        accountTypeValueHelpers.add(new AccountTypeValueHelper(AccountTypeEnum.SAVING.toString(),"Sparkonto"));
+        accountTypeValueHelpers.add(new AccountTypeValueHelper(AccountTypeEnum.DAYMONEY.toString(),"Tagesgeld"));
+        accountTypeValueHelpers.add(new AccountTypeValueHelper(AccountTypeEnum.BAR.toString(),"Bar"));
+        return accountTypeValueHelpers;
+    }
+
+    private void _loadAccountTypeSpinner(){
+        ArrayAdapter<AccountTypeValueHelper> adapter =
+                new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_dropdown_item,this._getAccountTypeList());
+        this.addAccountTypeSpinner.setAdapter(adapter);
+        this.addAccountTypeSpinner.setSelection(adapter.getPosition(adapter.getItem(1)));
     }
 }

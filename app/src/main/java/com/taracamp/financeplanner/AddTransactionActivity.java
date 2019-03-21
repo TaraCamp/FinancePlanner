@@ -25,6 +25,7 @@ import com.taracamp.financeplanner.Adapters.AccountSpinnerAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Core.Message;
 import com.taracamp.financeplanner.Models.Account;
+import com.taracamp.financeplanner.Models.Enums.TransactionTypeEnum;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.TransactionTypeValueHelper;
 import com.taracamp.financeplanner.Models.User;
@@ -47,14 +48,15 @@ public class AddTransactionActivity extends AppCompatActivity {
     private Switch addTransactionForcastSwitch;
     private Button addTransactionButton;
     private Button addTransactionCancelButton;
-
     private AccountSpinnerAdapter accountSpinnerAdapter;
 
+    /**#############################################################################################
+     * Properties
+     *############################################################################################*/
     private User currentUser;
     private List<Transaction> transactions;
     private List<Account> accounts;
     private FirebaseManager firebaseManager;
-
     private String transactionTypeSelectedValue;
     private boolean isForecastEnabled = false;
 
@@ -122,6 +124,23 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
     }
 
+    private void _initializeControls(){
+        this.addTransactionNameTextInputEditText = findViewById(R.id.addTransactionNameTextInputEditText);
+        this.addTransactionDescriptionTextInputEditText = findViewById(R.id.addTransactionDescriptionTextInputEditText);
+        this.addTransactionValueTextInputEditText = findViewById(R.id.addTransactionValueTextInputEditText);
+        this.addTransactionFromAccountSpinner = findViewById(R.id.addTransactionFromAccountSpinner);
+        this.addTransactionToAccountSpinner = findViewById(R.id.addTransactionToAccountSpinner);
+        this.addTransactionTypeSpinner = findViewById(R.id.addTransactionTypeSpinner);
+        this.addTransactionForcastSwitch = findViewById(R.id.addTransactionForcastSwitch);
+        this.addTransactionButton = findViewById(R.id.addTransactionButton);
+        this.addTransactionCancelButton = findViewById(R.id.addTransactionCancelButton);
+
+        this._loadTransactionTypeSpinner();
+        this._loadAccountSpinner();
+
+        this._initializeControlEvents();
+    }
+
     /**#############################################################################################
      * Private Methoden
      *############################################################################################*/
@@ -160,7 +179,7 @@ public class AddTransactionActivity extends AppCompatActivity {
     }
 
     private void _addTransactionToFirebaseDatabase(){
-        Transaction newTransaction = this._createTransaction();
+        Transaction newTransaction = this._getTransaction();
         if(this._checkTransactionValidation(newTransaction)){
             this.transactions.add(newTransaction);
             this.currentUser.setTransactions(this.transactions);
@@ -172,34 +191,20 @@ public class AddTransactionActivity extends AppCompatActivity {
             }
         }
     }
-
-    private void _initializeControls(){
-        this.addTransactionNameTextInputEditText = findViewById(R.id.addTransactionNameTextInputEditText);
-        this.addTransactionDescriptionTextInputEditText = findViewById(R.id.addTransactionDescriptionTextInputEditText);
-        this.addTransactionValueTextInputEditText = findViewById(R.id.addTransactionValueTextInputEditText);
-        this.addTransactionFromAccountSpinner = findViewById(R.id.addTransactionFromAccountSpinner);
-        this.addTransactionToAccountSpinner = findViewById(R.id.addTransactionToAccountSpinner);
-        this.addTransactionTypeSpinner = findViewById(R.id.addTransactionTypeSpinner);
-        this.addTransactionForcastSwitch = findViewById(R.id.addTransactionForcastSwitch);
-        this.addTransactionButton = findViewById(R.id.addTransactionButton);
-        this.addTransactionCancelButton = findViewById(R.id.addTransactionCancelButton);
-
-        this._loadTransactionTypeSpinner();
-        this._loadAccountSpinner();
-
-        this._initializeControlEvents();
+    
+    private void _loadTransactionTypeSpinner(){
+        ArrayAdapter<TransactionTypeValueHelper> adapter =
+                new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_dropdown_item,this._getTransactionTypeList());
+        this.addTransactionTypeSpinner.setAdapter(adapter);
+        this.addTransactionTypeSpinner.setSelection(adapter.getPosition(adapter.getItem(1)));
     }
 
-    private void _loadTransactionTypeSpinner(){
+    private List<TransactionTypeValueHelper> _getTransactionTypeList(){
         ArrayList<TransactionTypeValueHelper> transactionTypeValueHelpers = new ArrayList<>();
-        transactionTypeValueHelpers.add(new TransactionTypeValueHelper("POSITIVE","Einnahmen"));
-        transactionTypeValueHelpers.add(new TransactionTypeValueHelper("NEGATIVE","Ausgaben"));
-        transactionTypeValueHelpers.add(new TransactionTypeValueHelper("NEUTRAL","Transfer"));
-
-        ArrayAdapter<TransactionTypeValueHelper> adapter = new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_dropdown_item,transactionTypeValueHelpers);
-
-        this.addTransactionTypeSpinner.setAdapter(adapter);
-        this.addTransactionTypeSpinner.setSelection(adapter.getPosition(transactionTypeValueHelpers.get(1)));
+        transactionTypeValueHelpers.add(new TransactionTypeValueHelper(TransactionTypeEnum.POSITIVE.toString(),"Einnahmen"));
+        transactionTypeValueHelpers.add(new TransactionTypeValueHelper(TransactionTypeEnum.NEGATIVE.toString(),"Ausgaben"));
+        transactionTypeValueHelpers.add(new TransactionTypeValueHelper(TransactionTypeEnum.NEUTRAL.toString(),"Transfer"));
+        return transactionTypeValueHelpers;
     }
 
     private void _loadAccountSpinner(){
@@ -208,9 +213,8 @@ public class AddTransactionActivity extends AppCompatActivity {
         addTransactionToAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
 
-    private Transaction _createTransaction(){
+    private Transaction _getTransaction(){
         Transaction newTransaction = new Transaction();
-
         newTransaction.setTransactionName(this.addTransactionNameTextInputEditText.getText().toString());
         newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
         newTransaction.setTransactionDate(new Date());
