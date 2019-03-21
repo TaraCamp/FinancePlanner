@@ -40,6 +40,14 @@ public class SplashActivity extends AppCompatActivity {
         this.firebaseManager.onStop();
     }
 
+    /**#############################################################################################
+     * Activity Events
+     *############################################################################################*/
+    @Override
+    public void onBackPressed() {
+        //nothing
+    }
+
     private void loginFirebaseUser(){
         this.firebaseManager = new FirebaseManager();
         this.firebaseManager.mAuth = FirebaseAuth.getInstance();

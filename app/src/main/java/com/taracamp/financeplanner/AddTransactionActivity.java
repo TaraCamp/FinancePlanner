@@ -83,6 +83,13 @@ public class AddTransactionActivity extends AppCompatActivity {
         if (this.firebaseManager != null) this.firebaseManager.onStop();
     }
 
+    /**#############################################################################################
+     * Activity Events
+     *############################################################################################*/
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+    }
 
     /**#############################################################################################
      * Events

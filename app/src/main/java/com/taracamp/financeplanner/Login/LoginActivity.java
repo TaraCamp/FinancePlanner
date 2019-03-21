@@ -39,6 +39,14 @@ public class LoginActivity extends AppCompatActivity {
         this.attachEvents();
     }
 
+    /**#############################################################################################
+     * Activity Events
+     *############################################################################################*/
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
+    }
+
     private void init(){
         this.EmailEditText = findViewById(R.id.EmailEditText);
         this.PasswordEditText = findViewById(R.id.PasswordEditText);

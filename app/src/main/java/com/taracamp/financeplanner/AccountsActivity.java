@@ -60,6 +60,14 @@ public class AccountsActivity extends AppCompatActivity {
     }
 
     /**#############################################################################################
+     * Activity Events
+     *############################################################################################*/
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+    }
+
+    /**#############################################################################################
      * Controls & Events
      *############################################################################################*/
     private void _initializeControlEvents(){
