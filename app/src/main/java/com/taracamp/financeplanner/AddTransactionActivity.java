@@ -191,7 +191,7 @@ public class AddTransactionActivity extends AppCompatActivity {
             }
         }
     }
-    
+
     private void _loadTransactionTypeSpinner(){
         ArrayAdapter<TransactionTypeValueHelper> adapter =
                 new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_dropdown_item,this._getTransactionTypeList());

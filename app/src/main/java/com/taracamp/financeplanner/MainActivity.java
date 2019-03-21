@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Double _getTotalValue(List<Account> accounts){
         Double totalValue = 0.0;
-        for(Account account: accounts)totalValue = totalValue + account.getAccountValue();
+        for(Account account: accounts)if (account.isAccountRecordToValue())totalValue = totalValue + account.getAccountValue();
         return totalValue;
     }
 
