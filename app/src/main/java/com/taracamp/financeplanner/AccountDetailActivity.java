@@ -16,13 +16,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.taracamp.financeplanner.Adapters.AccountAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Core.Message;
 import com.taracamp.financeplanner.Models.Account;
@@ -31,7 +29,6 @@ import com.taracamp.financeplanner.Models.Enums.AccountTypeEnum;
 import com.taracamp.financeplanner.Models.User;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AccountDetailActivity extends AppCompatActivity {

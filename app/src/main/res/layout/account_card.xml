@@ -19,14 +19,15 @@
 
             <ImageView
                 android:id="@+id/accountCardImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50px"
+                android:layout_height="50px"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/googleg_standard_color_18"/>
+                android:gravity="center"
+                android:src="@drawable/green"/>
 
             <TextView
                 android:id="@+id/accountNameCardTextView"

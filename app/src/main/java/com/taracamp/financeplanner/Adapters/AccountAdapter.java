@@ -51,10 +51,13 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Account account = this.accounts.get(position);
 
-        //ImageView accountCardImageView = holder.accountCardImageView;
+        ImageView accountCardImageView = holder.accountCardImageView;
         TextView accountNameCardTextView = holder.accountNameCardTextView;
         TextView accountDescriptionCardTextView = holder.accountDescriptionCardTextView;
         TextView accountValueCardTextView = holder.accountValueCardTextView;
+
+        if (account.isAccountRecordToValue())accountCardImageView.setImageResource(R.drawable.green);
+        else accountCardImageView.setImageResource(R.drawable.red);
 
         accountValueCardTextView.setTypeface(null, Typeface.BOLD);
 
