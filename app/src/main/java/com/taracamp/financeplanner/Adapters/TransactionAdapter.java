@@ -4,6 +4,8 @@
  *################################################################################################*/
 package com.taracamp.financeplanner.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.taracamp.financeplanner.Core.Message;
+import com.taracamp.financeplanner.MainActivity;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.R;
+import com.taracamp.financeplanner.TransactionDetailActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,12 +26,24 @@ import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
 
-    private List<Transaction> mDataset;
+    /**#############################################################################################
+     * Properties
+     *############################################################################################*/
+    private List<Transaction> transactions;
+    private Context parentContext;
+    private MainActivity parentActivity;
 
-    public TransactionAdapter(List<Transaction> myDataset) {
-        this.mDataset = myDataset;
+    /**#############################################################################################
+     * Constructor
+     *############################################################################################*/
+    public TransactionAdapter(Context context,List<Transaction> myDataset) {
+        this.parentContext = context;
+        this.transactions = myDataset;
     }
 
+    /**#############################################################################################
+     * Adapter Methods
+     *############################################################################################*/
     @Override
     public TransactionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_card,parent,false);
@@ -36,8 +51,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Transaction transaction = this.mDataset.get(position);
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        Transaction transaction = this.transactions.get(position);
 
         //ImageView transactionCardImageView = holder.transactionCardImageView;
         TextView transactionNameCardTextView = holder.transactionNameCardTextView;
@@ -58,16 +73,21 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message.show(v.getContext(),"Transaktion Klick", Message.Mode.SUCCESS);
+                Intent intent = new Intent(parentContext.getApplicationContext(), TransactionDetailActivity.class);
+                intent.putExtra("POSITION",position);
+                parentContext.startActivity(intent);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return transactions.size();
     }
 
+    /**#############################################################################################
+     * Private Methods
+     *############################################################################################*/
     private String _getGermanDateFormat(Date date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         return simpleDateFormat.format(date);
