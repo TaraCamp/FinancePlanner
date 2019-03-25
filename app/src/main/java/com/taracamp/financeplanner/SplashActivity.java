@@ -70,8 +70,7 @@ public class SplashActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
                 if (userSnapshot.exists()){
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(getApplicationContext(),MenuActivity.class));
                 }
             }
 

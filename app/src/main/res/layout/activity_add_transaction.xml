@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <TextView
@@ -29,13 +30,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="Transaktion Kategorie" />
 
         <Spinner
@@ -88,8 +89,10 @@
     </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
+        android:id="@+id/addTransactionFromAccountLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <TextView
@@ -105,14 +108,17 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/addTransactionToAccountLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Transaktion Zu (Optional)" />
 
         <Spinner
@@ -122,8 +128,6 @@
 
     </LinearLayout>
 
-
-
     <Switch
         android:id="@+id/addTransactionForcastSwitch"
         android:layout_width="match_parent"
@@ -131,18 +135,26 @@
         android:layout_marginTop="8dp"
         android:text="Prognose aktivieren" />
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/addTransactionForecastDateTextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/addTransactionForecastDateTextInputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Transaktionsdatum Datum"
+            android:inputType="date"/>
+
+    </android.support.design.widget.TextInputLayout>
+
     <Button
         android:id="@+id/addTransactionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Hinzufügen" />
-
-    <Button
-        android:id="@+id/addTransactionCancelButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Zurück" />
 
 </LinearLayout>

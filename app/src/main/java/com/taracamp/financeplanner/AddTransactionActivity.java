@@ -4,16 +4,21 @@
  *################################################################################################*/
 package com.taracamp.financeplanner;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -31,6 +36,7 @@ import com.taracamp.financeplanner.Models.TransactionTypeValueHelper;
 import com.taracamp.financeplanner.Models.User;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,9 +52,15 @@ public class AddTransactionActivity extends AppCompatActivity {
     private Spinner addTransactionToAccountSpinner;
     private Spinner addTransactionTypeSpinner;
     private Switch addTransactionForcastSwitch;
+    private TextInputEditText addTransactionForecastDateTextInputEditText;
     private Button addTransactionButton;
-    private Button addTransactionCancelButton;
+    private LinearLayout addTransactionFromAccountLinearLayout;
+    private LinearLayout addTransactionToAccountLinearLayout;
+    private TextInputLayout addTransactionForecastDateTextInputLayout;
+
     private AccountSpinnerAdapter accountSpinnerAdapter;
+    private DatePickerDialog addTransactionForecastDatePickerDialog;
+    private Calendar addTransactionForecastDateCalendar;
 
     /**#############################################################################################
      * Properties
@@ -66,9 +78,7 @@ public class AddTransactionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_transaction);
-
-        this._loginFirebaseUser();
+        this._loginUser();
     }
 
     @Override
@@ -92,7 +102,7 @@ public class AddTransactionActivity extends AppCompatActivity {
     }
 
     /**#############################################################################################
-     * Events
+     * Control & Events
      *############################################################################################*/
     private void _initializeControlEvents(){
 
@@ -102,24 +112,18 @@ public class AddTransactionActivity extends AppCompatActivity {
                 _addTransactionToFirebaseDatabase();
             }
         });
-
-        this.addTransactionCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-            }
-        });
-
         this.addTransactionTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TransactionTypeValueHelper transactionTypeValueHelper = (TransactionTypeValueHelper) parent.getSelectedItem();
                 transactionTypeSelectedValue = transactionTypeValueHelper.getId();
+                _updateUI(transactionTypeSelectedValue);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 transactionTypeSelectedValue = "POSITIVE";
+                _updateUI(transactionTypeSelectedValue);
             }
         });
 
@@ -127,11 +131,37 @@ public class AddTransactionActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isForecastEnabled = isChecked;
+                if (isChecked)addTransactionForecastDateTextInputLayout.setVisibility(View.VISIBLE);
+                else addTransactionForecastDateTextInputLayout.setVisibility(View.GONE);
+            }
+        });
+        this.addTransactionForecastDateTextInputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                {
+                    addTransactionForecastDatePickerDialog = new DatePickerDialog(AddTransactionActivity.this, new DatePickerDialog.OnDateSetListener() {
+
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
+                        {
+                            addTransactionForecastDateCalendar = Calendar.getInstance();
+                            addTransactionForecastDateCalendar.set(Calendar.YEAR,year);
+                            addTransactionForecastDateCalendar.set(Calendar.MONTH,month);
+                            addTransactionForecastDateCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+                            addTransactionForecastDateTextInputEditText.setText(DateUtils.formatDateTime(AddTransactionActivity.this,
+                                    addTransactionForecastDateCalendar.getTimeInMillis(),DateUtils.FORMAT_SHOW_DATE));
+                        }
+                    },Calendar.getInstance().get(Calendar.YEAR),Calendar.getInstance().get(Calendar.MONTH),Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                    addTransactionForecastDatePickerDialog.show();
+                }
             }
         });
     }
 
     private void _initializeControls(){
+        this.setContentView(R.layout.activity_add_transaction);
         this.addTransactionNameTextInputEditText = findViewById(R.id.addTransactionNameTextInputEditText);
         this.addTransactionDescriptionTextInputEditText = findViewById(R.id.addTransactionDescriptionTextInputEditText);
         this.addTransactionValueTextInputEditText = findViewById(R.id.addTransactionValueTextInputEditText);
@@ -140,7 +170,10 @@ public class AddTransactionActivity extends AppCompatActivity {
         this.addTransactionTypeSpinner = findViewById(R.id.addTransactionTypeSpinner);
         this.addTransactionForcastSwitch = findViewById(R.id.addTransactionForcastSwitch);
         this.addTransactionButton = findViewById(R.id.addTransactionButton);
-        this.addTransactionCancelButton = findViewById(R.id.addTransactionCancelButton);
+        this.addTransactionForecastDateTextInputEditText = findViewById(R.id.addTransactionForecastDateTextInputEditText);
+        this.addTransactionFromAccountLinearLayout = findViewById(R.id.addTransactionFromAccountLinearLayout);
+        this.addTransactionToAccountLinearLayout = findViewById(R.id.addTransactionToAccountLinearLayout);
+        this.addTransactionForecastDateTextInputLayout = findViewById(R.id.addTransactionForecastDateTextInputLayout);
 
         this._loadTransactionTypeSpinner();
         this._loadAccountSpinner();
@@ -149,9 +182,9 @@ public class AddTransactionActivity extends AppCompatActivity {
     }
 
     /**#############################################################################################
-     * Private Methoden
+     * Firebase Auth
      *############################################################################################*/
-    private void _loginFirebaseUser(){
+    private void _loginUser(){
         this.firebaseManager = new FirebaseManager();
         this.firebaseManager.mAuth = FirebaseAuth.getInstance();
         this.firebaseManager.mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -171,18 +204,22 @@ public class AddTransactionActivity extends AppCompatActivity {
                 DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
                 if (userSnapshot.exists()){
                     currentUser = userSnapshot.getValue(User.class);
-                    if (currentUser!=null) {
-                        transactions = currentUser.getTransactions();
-                        accounts = currentUser.getAccounts();
-
-                        _initializeControls();
-                    }
+                    if (currentUser!=null) _loadData(currentUser);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
+    }
+
+    /**#############################################################################################
+     * Private Methoden
+     *############################################################################################*/
+    private void _loadData(User currentUser){
+        this.accounts = currentUser.getAccounts();
+        this.transactions = currentUser.getTransactions();
+        this._initializeControls();
     }
 
     private void _addTransactionToFirebaseDatabase(){
@@ -275,6 +312,19 @@ public class AddTransactionActivity extends AppCompatActivity {
                 this.accounts.set(this.addTransactionToAccountSpinner.getSelectedItemPosition(),toAccount);
                 break;
             }
+        }
+    }
+
+    private void _updateUI(String transactionType){
+        if (transactionType.equals(TransactionTypeEnum.POSITIVE.toString())){
+            this.addTransactionFromAccountLinearLayout.setVisibility(View.GONE);
+            this.addTransactionToAccountLinearLayout.setVisibility(View.VISIBLE);
+        } else if (transactionType.equals(TransactionTypeEnum.NEGATIVE.toString())){
+            this.addTransactionFromAccountLinearLayout.setVisibility(View.VISIBLE);
+            this.addTransactionToAccountLinearLayout.setVisibility(View.GONE);
+        }else{
+            this.addTransactionFromAccountLinearLayout.setVisibility(View.VISIBLE);
+            this.addTransactionToAccountLinearLayout.setVisibility(View.VISIBLE);
         }
     }
 }

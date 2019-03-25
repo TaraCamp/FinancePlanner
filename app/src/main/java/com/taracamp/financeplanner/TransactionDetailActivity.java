@@ -6,8 +6,14 @@ package com.taracamp.financeplanner;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Switch;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +27,15 @@ public class TransactionDetailActivity extends AppCompatActivity {
     /**#############################################################################################
      * Controls
      *############################################################################################*/
+    private Spinner detailTransactionTypeSpinner;
+    private Spinner detailTransactionCategorySpinner;
+    private TextInputEditText detailTransactionNameTextInputEditText;
+    private TextInputEditText detailTransactionDescriptionTextInputEditText;
+    private TextInputEditText detailTransactionValueTextInputEditText;
+    private Spinner detailTransactionFromAccountSpinner;
+    private Spinner detailTransactionToAccountSpinner;
+    private Switch detailTransactionForcastSwitch;
+    private Button changeTransactionButton;
 
     /**#############################################################################################
      * Properties
@@ -62,10 +77,35 @@ public class TransactionDetailActivity extends AppCompatActivity {
      * Controls & Events
      *############################################################################################*/
     private void _initializeControlEvents(){
+        this.changeTransactionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
+        this.detailTransactionTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void _initializeControls(){
+        this.detailTransactionTypeSpinner = findViewById(R.id.detailTransactionTypeSpinner);
+        this.detailTransactionCategorySpinner = findViewById(R.id.detailTransactionCategorySpinner);
+        this.detailTransactionNameTextInputEditText = findViewById(R.id.detailTransactionNameTextInputEditText);
+        this.detailTransactionDescriptionTextInputEditText = findViewById(R.id.detailTransactionDescriptionTextInputEditText);
+        this.detailTransactionValueTextInputEditText = findViewById(R.id.detailTransactionValueTextInputEditText);
+        this.detailTransactionFromAccountSpinner = findViewById(R.id.detailTransactionFromAccountSpinner);
+        this.detailTransactionToAccountSpinner = findViewById(R.id.detailTransactionToAccountSpinner);
+        this.detailTransactionForcastSwitch = findViewById(R.id.detailTransactionForcastSwitch);
+        this.changeTransactionButton = findViewById(R.id.changeTransactionButton);
         this._initializeControlEvents();
     }
 

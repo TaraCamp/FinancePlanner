@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="1"
+    android:orientation="vertical"
+    tools:context="com.taracamp.financeplanner.MenuActivity">
+
+    <!--ROW-->
+    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:background="@color/tran_colorBlue"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/transactionsRelativeLayout">
+
+            <ImageView
+                android:id="@+id/categoria_image_12"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:src="@drawable/transactions"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/categoria_image_12"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Transaktionen"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:background="@color/tran_colorDark"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/accountsRelativeLayout">
+
+            <ImageView
+                android:id="@+id/categoria_image_22"
+                android:src="@drawable/bank"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/categoria_image_22"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Konten"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <!--ROW-->
+    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:background="@color/tran_colorGreen"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/calendarRelativeLayout">
+
+            <ImageView
+                android:id="@+id/categoria_image_13"
+                android:src="@drawable/calendar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/categoria_image_13"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Ausgaben Kalender"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <!--ROW-->
+    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:background="@color/tran_colorRed"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/userRelativeLayout">
+
+            <ImageView
+                android:id="@+id/categoria_image_1"
+                android:src="@drawable/account"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/categoria_image_1"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Benutzer"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/logoutRelativeLayout"
+            android:background="@color/tran_colorYellow"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/categoria_image_2"
+                android:src="@drawable/exit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/categoria_image_2"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Abmelden"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
