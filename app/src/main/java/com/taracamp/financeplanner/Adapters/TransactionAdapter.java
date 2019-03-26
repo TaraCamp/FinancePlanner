@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
 
     /**#############################################################################################
@@ -62,12 +64,15 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         transactionValueCardTextView.setTypeface(null, Typeface.BOLD);
 
         if (transaction.getTransactionName()!=null)transactionNameCardTextView.setText(transaction.getTransactionName());
-        if (transaction.getTransactionDate()!=null)transactionDescriptionCardTextView.setText(this._getGermanDateFormat(transaction.getTransactionDate()));
+
+        String transactionDate = "";
+        if (transaction.getTransactionDate()!=null)transactionDate = _getGermanDateFormat(transaction.getTransactionDate());
+
+        transactionDescriptionCardTextView.setText("(" + transactionDate + ") " + transaction.getTransactionDescription());
 
         if (transaction.getTransactionValue()!=null){
             this._setTransactionValueTextViewColor(transactionValueCardTextView,transaction.getTransactionType());
-            String transactionValueText = transactionValueCardTextView.getText() + transaction.getTransactionValue().toString() + "\u20ac";
-            transactionValueCardTextView.setText(transactionValueText);
+            transactionValueCardTextView.setText(transactionValueCardTextView.getText() + transaction.getTransactionValue().toString() + "\u20ac");
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +114,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
      *############################################################################################*/
     public class ViewHolder extends RecyclerView.ViewHolder
     {
-        private ImageView transactionCardImageView;
+        private CircleImageView transactionCardImageView;
         private TextView transactionNameCardTextView;
         private TextView transactionDescriptionCardTextView;
         private TextView transactionValueCardTextView;

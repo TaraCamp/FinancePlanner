@@ -40,7 +40,7 @@ public class MenuActivity extends AppCompatActivity {
      *############################################################################################*/
     @Override
     public void onBackPressed() {
-        //startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        //startActivity(new Intent(getApplicationContext(),TransactionsActivity.class));
     }
 
     /**#############################################################################################
@@ -59,13 +59,13 @@ public class MenuActivity extends AppCompatActivity {
         this.transactionsRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                startActivity(new Intent(getApplicationContext(),TransactionsActivity.class));
             }
         });
         this.accountsRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getApplicationContext(),AccountsActivity.class));
             }
         });
         this.calendarRelativeLayout.setOnClickListener(new View.OnClickListener() {

@@ -98,7 +98,7 @@ public class AddTransactionActivity extends AppCompatActivity {
      *############################################################################################*/
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        startActivity(new Intent(getApplicationContext(),TransactionsActivity.class));
     }
 
     /**#############################################################################################
@@ -231,7 +231,7 @@ public class AddTransactionActivity extends AppCompatActivity {
             this.currentUser.setAccounts(this.accounts);
             if(this.firebaseManager.saveObject(this.currentUser)){
                 Message.show(getApplicationContext(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                startActivity(new Intent(getApplicationContext(),MenuActivity.class));
             }
         }
     }

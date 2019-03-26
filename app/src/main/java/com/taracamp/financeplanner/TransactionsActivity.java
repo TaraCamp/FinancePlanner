@@ -1,40 +1,48 @@
 /**#################################################################################################
  * Author: Wladimir Tarasov
- * Date: 19.03.2019
+ * Date: 26.03.2019
  *################################################################################################*/
 package com.taracamp.financeplanner;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.taracamp.financeplanner.Adapters.AccountAdapter;
+import com.taracamp.financeplanner.Adapters.TransactionAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
+import com.taracamp.financeplanner.Models.Account;
 import com.taracamp.financeplanner.Models.User;
 
-public class AccountsActivity extends AppCompatActivity {
+import java.util.Collections;
+import java.util.List;
+
+public class TransactionsActivity extends AppCompatActivity {
 
     /**#############################################################################################
      * Controls
      *############################################################################################*/
-    private RecyclerView accountsRecyclerView;
+    private TextView transactionsTotalValueTextView;
+    private RecyclerView transactionsRecyclerView;
+    private FloatingActionButton openAddTransactionDialogFloatingActionButton;
+
     private RecyclerView.Adapter mAdapter;
-    private Button addAccountButton;
 
     /**#############################################################################################
      * Properties
      *############################################################################################*/
-    private User currentUser;
     private FirebaseManager firebaseManager;
+    private User currentUser;
 
     /**#############################################################################################
      * Lifecycles
@@ -42,21 +50,19 @@ public class AccountsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accounts);
-
         this._loginUser();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (this.firebaseManager != null) this.firebaseManager.onStart();
+        this.firebaseManager.onStart();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (this.firebaseManager != null) this.firebaseManager.onStop();
+        this.firebaseManager.onStop();
     }
 
     /**#############################################################################################
@@ -70,23 +76,21 @@ public class AccountsActivity extends AppCompatActivity {
     /**#############################################################################################
      * Controls & Events
      *############################################################################################*/
-    private void _initializeControlEvents(){
-        this.addAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),AddAccountActivity.class));
-            }
-        });
+    private void _initializeControls(){
+        this.setContentView(R.layout.activity_transactions);
+        this.transactionsTotalValueTextView = findViewById(R.id.transactionsTotalValueTextView);
+        this.transactionsRecyclerView = findViewById(R.id.transactionsRecyclerView);
+        this.openAddTransactionDialogFloatingActionButton = findViewById(R.id.openAddTransactionDialogFloatingActionButton);
+        this._initializeControlEvents();
     }
 
-    private void _initializeControls(){
-        this.accountsRecyclerView = findViewById(R.id.accountsRecyclerView);
-        this.accountsRecyclerView.setHasFixedSize(true);
-        this.accountsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        this.addAccountButton = findViewById(R.id.addAccountButton);
-
-        this._initializeControlEvents();
+    private void _initializeControlEvents(){
+        this.openAddTransactionDialogFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),AddTransactionActivity.class));
+            }
+        });
     }
 
     /**#############################################################################################
@@ -112,8 +116,8 @@ public class AccountsActivity extends AppCompatActivity {
                 DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
                 if (userSnapshot.exists()){
                     currentUser = userSnapshot.getValue(User.class);
-                    if (currentUser!=null) {
-                        _loadData(currentUser);
+                    if (currentUser!=null){
+                        _loadData();
                     }
                 }
             }
@@ -126,10 +130,38 @@ public class AccountsActivity extends AppCompatActivity {
     /**#############################################################################################
      * Private Methods
      *############################################################################################*/
-    private void _loadData(User currentUser){
+    private void _loadData(){
         this._initializeControls();
-        this.mAdapter = new AccountAdapter(getApplicationContext(),currentUser.getAccounts());
-        this.accountsRecyclerView.setAdapter(this.mAdapter);
+
+        Collections.reverse(this.currentUser.getTransactions());
+
+        this._loadRecyclerViewData();
+        this._loadTotalValueTextView();
+    }
+
+    private void _loadTotalValueTextView(){
+        Double totalValue = _getTotalValue(this.currentUser.getAccounts());
+        this._setTextViewColor(transactionsTotalValueTextView,totalValue);
+        this.transactionsTotalValueTextView.setText("");
+        this.transactionsTotalValueTextView.setText(totalValue.toString() + "\u20ac");
+    }
+
+    private void _loadRecyclerViewData(){
+        this.transactionsRecyclerView.setHasFixedSize(true);
+        this.transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.mAdapter = new TransactionAdapter(getApplicationContext(),currentUser.getTransactions());
+        this.transactionsRecyclerView.setAdapter(this.mAdapter);
+    }
+
+    private Double _getTotalValue(List<Account> accounts){
+        Double totalValue = 0.0;
+        for(Account account: accounts)if (account.isAccountRecordToValue())totalValue = totalValue + account.getAccountValue();
+        return totalValue;
+    }
+
+    private void _setTextViewColor(TextView control, Double totalValue){
+        if (totalValue>0)control.setTextColor(Color.rgb(0,200,0));
+        else control.setTextColor(Color.rgb(200,0,0));
     }
 
 }

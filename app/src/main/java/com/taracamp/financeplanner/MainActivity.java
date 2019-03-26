@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void _initializeControls(){
-        this.TotalValueTextView = findViewById(R.id.TotalValueTextView);
+        this.TotalValueTextView = findViewById(R.id.TotalValueTextView2);
         this.recyclerView = findViewById(R.id.TransactionsRecyclerView);
         this.navigateToAddTransactionActivityButton = findViewById(R.id.navigateToAddTransactionActivityButton);
         this.navigateToAccountsActivityButton = findViewById(R.id.navigateToAccountsActivityButton);
