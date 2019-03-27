@@ -22,8 +22,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.taracamp.financeplanner.Adapters.TransactionAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Models.Account;
+import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -133,14 +135,18 @@ public class TransactionsActivity extends AppCompatActivity {
     private void _loadData(){
         this._initializeControls();
 
-        Collections.reverse(this.currentUser.getTransactions());
+        if (this.currentUser.getTransactions()!=null)Collections.reverse(this.currentUser.getTransactions());
+        else this.currentUser.setTransactions(new ArrayList<Transaction>());
 
         this._loadRecyclerViewData();
         this._loadTotalValueTextView();
     }
 
     private void _loadTotalValueTextView(){
-        Double totalValue = _getTotalValue(this.currentUser.getAccounts());
+        Double totalValue;
+        if (this.currentUser.getAccounts()!=null) totalValue = _getTotalValue(this.currentUser.getAccounts());
+        else totalValue = 0.0;
+
         this._setTextViewColor(transactionsTotalValueTextView,totalValue);
         this.transactionsTotalValueTextView.setText("");
         this.transactionsTotalValueTextView.setText(totalValue.toString() + "\u20ac");
@@ -163,5 +169,4 @@ public class TransactionsActivity extends AppCompatActivity {
         if (totalValue>0)control.setTextColor(Color.rgb(0,200,0));
         else control.setTextColor(Color.rgb(200,0,0));
     }
-
 }

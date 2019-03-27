@@ -1,6 +1,6 @@
 /**#################################################################################################
  * Author: Wladimir Tarasov
- * Date: 13.03.2019
+ * Date: 27.03.2019
  *################################################################################################*/
 package com.taracamp.financeplanner.Login;
 
@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,6 +22,7 @@ import android.support.annotation.NonNull;
 
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.MainActivity;
+import com.taracamp.financeplanner.MenuActivity;
 import com.taracamp.financeplanner.Models.Account;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.TransactionCategory;
@@ -32,23 +34,20 @@ import java.util.Date;
 import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
-    private static final String TAG = "familyplan.debug";
-    private static final String CLASS = "RegisterActivity";
 
     /**#############################################################################################
      * Controls
      *############################################################################################*/
-    private TextInputEditText EmailEditText;
-    private TextInputEditText UsernameEditeText;
-    private TextInputEditText PasswordEditText;
-    private Button RegisterButton;
-    private Button BackToLoginPageButton;
+    private TextInputEditText registerEmailTextInputEditText;
+    private TextInputEditText registerUsernameTextInputEditText;
+    private TextInputEditText registerPasswordTextInputEditText;
+    private Button registerConfirmButton;
+    private Button registerToPreviewPageButton;
 
     /**#############################################################################################
      * Properties
      *############################################################################################*/
     private FirebaseManager firebaseManager;
-    private FirebaseAuth mAuth;
 
     /**#############################################################################################
      * Lifecycles
@@ -56,11 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
-        Log.d(TAG,CLASS+".onCreate()");
-
         this._initializeControls();
-
     }
 
     /**#############################################################################################
@@ -74,19 +69,29 @@ public class RegisterActivity extends AppCompatActivity {
     /**#############################################################################################
      * Events
      *############################################################################################*/
+    private void _initializeControls(){
+        this.setContentView(R.layout.activity_register);
+        this.registerEmailTextInputEditText = findViewById(R.id.registerEmailTextInputEditText);
+        this.registerUsernameTextInputEditText = findViewById(R.id.registerUsernameTextInputEditText);
+        this.registerPasswordTextInputEditText = findViewById(R.id.registerPasswordTextInputEditText);
+        this.registerConfirmButton = findViewById(R.id.registerConfirmButton);
+        this.registerToPreviewPageButton = findViewById(R.id.registerToPreviewPageButton);
 
-    private void _attachEvents(){
-        this.RegisterButton.setOnClickListener(new View.OnClickListener() {
+        this._initializeControlEvents();
+    }
+
+    private void _initializeControlEvents(){
+        this.registerConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = EmailEditText.getText().toString();
-                final String password = PasswordEditText.getText().toString();
+                final String email = registerEmailTextInputEditText.getText().toString();
+                final String password = registerPasswordTextInputEditText.getText().toString();
                 if (_checkValidation(email,password)){
                     _register(email,password);
                 }
             }
         });
-        this.BackToLoginPageButton.setOnClickListener(new View.OnClickListener() {
+        this.registerToPreviewPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openLoginPage();
@@ -97,36 +102,30 @@ public class RegisterActivity extends AppCompatActivity {
     /**#############################################################################################
      * Private functions
      *############################################################################################*/
-    private void _initializeControls(){
-        this.EmailEditText = findViewById(R.id.registerEmailTextInputEditText);
-        this.UsernameEditeText = findViewById(R.id.registerUsernameTextInputEditText);
-        this.PasswordEditText = findViewById(R.id.registerPasswordTextInputEditText);
-        this.RegisterButton = findViewById(R.id.registerConfirmButton);
-        this.BackToLoginPageButton = findViewById(R.id.registerToPreviewPageButton);
-
-        this._attachEvents();
-    }
-
-    private boolean _checkValidation(String email,String password){
-        //// TODO: 16.02.2019
-      return true;
-    }
-
     private void _register(String email,String password){
-        this.mAuth = FirebaseAuth.getInstance();
-        this.mAuth.createUserWithEmailAndPassword(email, password)
+        this.firebaseManager = new FirebaseManager();
+        this.firebaseManager.mAuth = FirebaseAuth.getInstance();
+        this.firebaseManager.mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            if (_createUser(mAuth.getCurrentUser())){
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                intent.putExtra("USERTOKEN", mAuth.getCurrentUser().getUid());
-                                startActivity(intent);
+                            if (_createUser(firebaseManager.mAuth.getCurrentUser())){
+                                startActivity(new Intent(getApplicationContext(), MenuActivity.class));
                             }
                         }
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("DEBUG",e.getMessage().toString());
+                    }
+        });
+    }
+
+    private boolean _checkValidation(String email,String password){
+        //// TODO: 16.02.2019
+        return true;
     }
 
     private Account _generateAccount(){
@@ -157,24 +156,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean _createUser(FirebaseUser firebaseUser){
-        this.firebaseManager = new FirebaseManager();
-
-        List<Transaction> transactionList = new ArrayList<>();
-        List<Account> accountList = new ArrayList<>();
-        List<TransactionCategory> transactionCategoryList;
-
-        Account startAccount = this._generateAccount();
-        accountList.add(startAccount);
-
-        Transaction startTransaction = this._generateTransaction();
-        transactionList.add(startTransaction);
-
         User user = new User();
         user.setToken(firebaseUser.getUid());
         user.setEmail(firebaseUser.getEmail());
-        user.setTransactions(transactionList);
-        user.setAccounts(accountList);
-
         return this.firebaseManager.saveObject(user);
     }
 
