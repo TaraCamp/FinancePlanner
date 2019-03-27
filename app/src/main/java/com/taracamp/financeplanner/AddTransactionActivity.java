@@ -19,11 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.taracamp.financeplanner.Adapters.AddTransactionPagerAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
-import com.taracamp.financeplanner.Models.Account;
-import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
-
-import java.util.List;
 
 public class AddTransactionActivity extends AppCompatActivity {
 
@@ -33,6 +29,13 @@ public class AddTransactionActivity extends AppCompatActivity {
     // Tab index text size.
     private final static int TEXTSIZE_ACTIVE = 16;
     private final static int TEXTSIZE_DEACTIVE = 14;
+
+    // Tab index
+    private final static int TAB_OBJECT_NUMBER_ONE = 0;
+    private final static int TAB_OBJECT_NUMBER_TWO = 1;
+    private final static int TAB_OBJECT_NUMBER_THREE = 2;
+
+    private final static int OFFSCREEN_PAGE_LIMIT = 2;
 
     /**#############################################################################################
      * Controls
@@ -48,8 +51,6 @@ public class AddTransactionActivity extends AppCompatActivity {
      * Properties
      *############################################################################################*/
     private User currentUser;
-    private List<Transaction> transactions;
-    private List<Account> accounts;
     private FirebaseManager firebaseManager;
 
     /**#############################################################################################
@@ -88,19 +89,19 @@ public class AddTransactionActivity extends AppCompatActivity {
         this.addTransactionPositiveTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                addTransactionViewpager.setCurrentItem(TAB_OBJECT_NUMBER_ONE);
             }
         });
         this.addTransactionNegativeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                addTransactionViewpager.setCurrentItem(TAB_OBJECT_NUMBER_TWO);
             }
         });
         this.addTransactionNeutralTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                addTransactionViewpager.setCurrentItem(TAB_OBJECT_NUMBER_THREE);
             }
         });
         this.addTransactionViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
@@ -149,7 +150,7 @@ public class AddTransactionActivity extends AppCompatActivity {
                 DataSnapshot userSnapshot = dataSnapshot.child("users").child(token);
                 if (userSnapshot.exists()){
                     currentUser = userSnapshot.getValue(User.class);
-                    if (currentUser!=null) _loadData(currentUser);
+                    if (currentUser!=null) _loadData();
                 }
             }
 
@@ -161,23 +162,19 @@ public class AddTransactionActivity extends AppCompatActivity {
     /**#############################################################################################
      * Private Methoden
      *############################################################################################*/
-    private void _loadData(User currentUser){
-        this.accounts = currentUser.getAccounts();
-        this.transactions = currentUser.getTransactions();
-
+    private void _loadData(){
         this._initializeControls();
         this._setupPagerView();
         this._initializeControlEvents();
     }
 
     private void _setupPagerView(){
-        this.addTransactionPagerAdapter = new AddTransactionPagerAdapter(getSupportFragmentManager(),this.firebaseManager);
-        this.addTransactionViewpager.setOffscreenPageLimit(2);
+        this.addTransactionPagerAdapter = new AddTransactionPagerAdapter(getSupportFragmentManager(),this.firebaseManager,this.currentUser);
+        this.addTransactionViewpager.setOffscreenPageLimit(OFFSCREEN_PAGE_LIMIT);
         this.addTransactionViewpager.setAdapter(this.addTransactionPagerAdapter);
     }
 
-    private void _changeTabs(int position)
-    {
+    private void _changeTabs(int position){
         switch (position)
         {
             case 0 :

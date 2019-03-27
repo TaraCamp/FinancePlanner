@@ -136,6 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
         startAccount.setAccountType("MAIN");
         startAccount.setAccoutCreateDate(new Date());
         startAccount.setAccountValue(0.0);
+        startAccount.setAccountRecordToValue(true);
 
         return startAccount;
     }
@@ -157,8 +158,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean _createUser(FirebaseUser firebaseUser){
         User user = new User();
+
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(_generateAccount());
+
         user.setToken(firebaseUser.getUid());
         user.setEmail(firebaseUser.getEmail());
+        user.setAccounts(accounts);
         return this.firebaseManager.saveObject(user);
     }
 

@@ -15,12 +15,17 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.taracamp.financeplanner.Adapters.AccountSpinnerAdapter;
 import com.taracamp.financeplanner.Core.FirebaseManager;
+import com.taracamp.financeplanner.Core.Message;
 import com.taracamp.financeplanner.Models.Account;
+import com.taracamp.financeplanner.Models.Enums.TransactionTypeEnum;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AddTransactionPositiveFragment extends Fragment {
@@ -42,19 +47,28 @@ public class AddTransactionPositiveFragment extends Fragment {
      *############################################################################################*/
     private static FirebaseManager firebaseManager;
     private boolean isForecastEnabled = false;
-    private User currentUser;
-    private List<Transaction> transactions;
-    private List<Account> accounts;
+    private static User currentUser;
+    private static List<Transaction> transactions;
+    private static List<Account> accounts;
+    private AccountSpinnerAdapter accountSpinnerAdapter;
 
     /**#############################################################################################
      * Constructer
      *############################################################################################*/
     public AddTransactionPositiveFragment(){}
 
-    public static AddTransactionPositiveFragment newInstance(FirebaseManager firebaseManager)
+    public static AddTransactionPositiveFragment newInstance(FirebaseManager _firebaseManager,User _currentUser)
     {
         AddTransactionPositiveFragment fragment = new AddTransactionPositiveFragment();
-        firebaseManager = firebaseManager;
+        firebaseManager = _firebaseManager;
+        currentUser = _currentUser;
+
+        if (currentUser.getTransactions()!=null)transactions = currentUser.getTransactions();
+        else transactions = new ArrayList<>();
+
+        if (currentUser.getAccounts()!=null)accounts = currentUser.getAccounts();
+        else accounts = new ArrayList<>();
+
         return fragment;
     }
 
@@ -67,6 +81,7 @@ public class AddTransactionPositiveFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_add_transaction_positive, container, false);
         this._initializeControls(view);
+        this._loadAccountSpinner();
         return view;
     }
 
@@ -83,7 +98,7 @@ public class AddTransactionPositiveFragment extends Fragment {
         this.addTransactionPositiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                _addTransaction();
             }
         });
         this.addTransactionForcastSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -117,22 +132,27 @@ public class AddTransactionPositiveFragment extends Fragment {
             this.transactions.add(transaction);
             this.currentUser.setTransactions(this.transactions);
             this._changeAccountValueByTransaction(transaction);
+            this.currentUser.setAccounts(this.accounts);
 
+            if (this.firebaseManager.saveObject(this.currentUser)){
+                Message.show(getActivity(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
+            }else{
+                Message.show(getActivity(),"Transaktion konnte nicht angelegt werden", Message.Mode.ERROR);
+            }
         }
     }
 
     private Transaction _getTransaction(){
         Transaction newTransaction = new Transaction();
-        //newTransaction.setTransactionName(this.addTransactionNameTextInputEditText.getText().toString());
-        //newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
-        //newTransaction.setTransactionDate(new Date());
-        //newTransaction.setTransactionCreateDate(new Date());
-        //newTransaction.setTransactionFromAccount(accounts.get(this.addTransactionFromAccountSpinner.getSelectedItemPosition()));
-        //newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
-        //newTransaction.setTransactionType(this.transactionTypeSelectedValue); // Get from spinner
-        //newTransaction.setTransactionDescription(this.addTransactionDescriptionTextInputEditText.getText().toString());
-        //newTransaction.setTransactionForecast(isForecastEnabled);
-        //newTransaction.setTransactionCategory(null);
+        newTransaction.setTransactionName(this.addTransactionNameEditText.getText().toString());
+        newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
+        newTransaction.setTransactionDate(new Date());
+        newTransaction.setTransactionCreateDate(new Date());
+        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
+        newTransaction.setTransactionType(TransactionTypeEnum.POSITIVE.toString());
+        newTransaction.setTransactionDescription(this.addTransactionDescriptionEditText.getText().toString());
+        newTransaction.setTransactionForecast(isForecastEnabled);
+        //newTransaction.setTransactionCategory(null); //// TODO: 27.03.2019 überprüfen ob notwendig
 
         return newTransaction;
     }
@@ -143,6 +163,15 @@ public class AddTransactionPositiveFragment extends Fragment {
     }
 
     private void _changeAccountValueByTransaction(Transaction transaction){
+        Account account = transaction.getTransactionToAccount();
+        Double oldValue = account.getAccountValue();
+        account.setAccountValue(oldValue + transaction.getTransactionValue());
 
+        this.accounts.set(this.addTransactionToAccountSpinner.getSelectedItemPosition(),account);
+    }
+
+    private void _loadAccountSpinner(){
+        accountSpinnerAdapter = new AccountSpinnerAdapter(getActivity(),android.R.layout.simple_spinner_item,this.accounts);
+        addTransactionToAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
 }
