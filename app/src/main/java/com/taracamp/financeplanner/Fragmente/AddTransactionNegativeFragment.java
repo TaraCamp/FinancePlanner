@@ -1,6 +1,6 @@
 /**#################################################################################################
  * Author: Wladimir Tarasov
- * Date: 26.03.2019
+ * Date: 28.03.2019
  *################################################################################################*/
 package com.taracamp.financeplanner.Fragmente;
 
@@ -28,19 +28,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AddTransactionPositiveFragment extends Fragment {
+public class AddTransactionNegativeFragment extends Fragment {
 
     /**#############################################################################################
      * Controls
      *############################################################################################*/
-        private EditText addTransactionNameEditText;
-        private Button addTransactionOpenTemplatesButton;
-        private EditText addTransactionDescriptionEditText;
-        private EditText addTransactionValueTextInputEditText;
-        private Spinner addTransactionToAccountSpinner;
-        private Switch addTransactionForcastSwitch;
-        private EditText addTransactionForecastDateEditText;
-        private Button addTransactionPositiveButton;
+    private EditText addTransactionNegativeNameEditText;
+    private Button addTransactionNegativeOpenTemplatesButton;
+    private EditText addTransactionNegativeDescriptionEditText;
+    private EditText addTransactionNegativeValueTextInputEditText;
+    private Spinner addTransactionFromAccountSpinner;
+    private Switch addTransactionNegativeForcastSwitch;
+    private EditText addTransactionNegativeForecastDateEditText;
+    private Button addTransactionNegativeButton;
 
     /**#############################################################################################
      * Properties
@@ -54,11 +54,10 @@ public class AddTransactionPositiveFragment extends Fragment {
     /**#############################################################################################
      * Constructer
      *############################################################################################*/
-    public AddTransactionPositiveFragment(){}
+    public AddTransactionNegativeFragment() {}
 
-    public static AddTransactionPositiveFragment newInstance(FirebaseManager _firebaseManager,User _currentUser)
-    {
-        AddTransactionPositiveFragment fragment = new AddTransactionPositiveFragment();
+    public static AddTransactionNegativeFragment newInstance(FirebaseManager _firebaseManager,User _currentUser) {
+        AddTransactionNegativeFragment fragment = new AddTransactionNegativeFragment();
         firebaseManager = _firebaseManager;
         currentUser = _currentUser;
 
@@ -67,7 +66,6 @@ public class AddTransactionPositiveFragment extends Fragment {
 
         if (currentUser.getAccounts()!=null)accounts = currentUser.getAccounts();
         else accounts = new ArrayList<>();
-
         return fragment;
     }
 
@@ -75,9 +73,8 @@ public class AddTransactionPositiveFragment extends Fragment {
      * Lifecycles
      *############################################################################################*/
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        final View view = inflater.inflate(R.layout.fragment_add_transaction_positive, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_add_transaction_negative, container, false);
         this._initializeControls(view);
         this._loadAccountSpinner();
         return view;
@@ -86,39 +83,39 @@ public class AddTransactionPositiveFragment extends Fragment {
     /**#############################################################################################
      * Control Events
      *############################################################################################*/
+    private void _initializeControls(View view){
+        this.addTransactionNegativeNameEditText = view.findViewById(R.id.addTransactionNegativeNameEditText);
+        this.addTransactionNegativeOpenTemplatesButton = view.findViewById(R.id.addTransactionNegativeOpenTemplatesButton);
+        this.addTransactionNegativeDescriptionEditText = view.findViewById(R.id.addTransactionNegativeDescriptionEditText);
+        this.addTransactionNegativeValueTextInputEditText = view.findViewById(R.id.addTransactionNegativeValueTextInputEditText);
+        this.addTransactionFromAccountSpinner = view.findViewById(R.id.addTransactionFromAccountSpinner);
+        this.addTransactionNegativeForcastSwitch = view.findViewById(R.id.addTransactionNegativeForcastSwitch);
+        this.addTransactionNegativeForecastDateEditText = view.findViewById(R.id.addTransactionNegativeForecastDateEditText);
+        this.addTransactionNegativeButton = view.findViewById(R.id.addTransactionNegativeButton);
+        this._initializeControlEvents();
+    }
+
     private void _initializeControlEvents(){
-        this.addTransactionOpenTemplatesButton.setOnClickListener(new View.OnClickListener() {
+        this.addTransactionNegativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-        this.addTransactionPositiveButton.setOnClickListener(new View.OnClickListener() {
+        this.addTransactionNegativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _addTransaction();
             }
         });
-        this.addTransactionForcastSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        this.addTransactionNegativeForcastSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isForecastEnabled = isChecked;
-                if (isChecked)addTransactionForecastDateEditText.setVisibility(View.VISIBLE);
-                else addTransactionForecastDateEditText.setVisibility(View.GONE);
+                if (isChecked)addTransactionNegativeForecastDateEditText.setVisibility(View.VISIBLE);
+                else addTransactionNegativeForecastDateEditText.setVisibility(View.GONE);
             }
         });
-    }
-
-    private void _initializeControls(View view){
-        this.addTransactionNameEditText = view.findViewById(R.id.addTransactionNameEditText);
-        this.addTransactionOpenTemplatesButton = view.findViewById(R.id.addTransactionOpenTemplatesButton);
-        this.addTransactionDescriptionEditText = view.findViewById(R.id.addTransactionDescriptionEditText);
-        this.addTransactionValueTextInputEditText = view.findViewById(R.id.addTransactionValueTextInputEditText);
-        this.addTransactionToAccountSpinner = view.findViewById(R.id.addTransactionToAccountSpinner);
-        this.addTransactionForcastSwitch = view.findViewById(R.id.addTransactionForcastSwitch);
-        this.addTransactionForecastDateEditText = view.findViewById(R.id.addTransactionForecastDateEditText);
-        this.addTransactionPositiveButton = view.findViewById(R.id.addTransactionPositiveButton);
-        this._initializeControlEvents();
     }
 
     /**#############################################################################################
@@ -142,13 +139,13 @@ public class AddTransactionPositiveFragment extends Fragment {
 
     private Transaction _getTransaction(){
         Transaction newTransaction = new Transaction();
-        newTransaction.setTransactionName(this.addTransactionNameEditText.getText().toString());
-        newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
+        newTransaction.setTransactionName(this.addTransactionNegativeNameEditText.getText().toString());
+        newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionNegativeValueTextInputEditText.getText().toString()));
         newTransaction.setTransactionDate(new Date());
         newTransaction.setTransactionCreateDate(new Date());
-        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
+        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionFromAccountSpinner.getSelectedItemPosition()));
         newTransaction.setTransactionType(TransactionTypeEnum.POSITIVE.toString());
-        newTransaction.setTransactionDescription(this.addTransactionDescriptionEditText.getText().toString());
+        newTransaction.setTransactionDescription(this.addTransactionNegativeDescriptionEditText.getText().toString());
         newTransaction.setTransactionForecast(isForecastEnabled);
         //newTransaction.setTransactionCategory(null); //// TODO: 27.03.2019 überprüfen ob notwendig
 
@@ -161,15 +158,11 @@ public class AddTransactionPositiveFragment extends Fragment {
     }
 
     private void _changeAccountValueByTransaction(Transaction transaction){
-        Account account = transaction.getTransactionToAccount();
-        Double oldValue = account.getAccountValue();
-        account.setAccountValue(oldValue + transaction.getTransactionValue());
 
-        this.accounts.set(this.addTransactionToAccountSpinner.getSelectedItemPosition(),account);
     }
 
     private void _loadAccountSpinner(){
         AccountSpinnerAdapter accountSpinnerAdapter = new AccountSpinnerAdapter(getActivity(),android.R.layout.simple_spinner_item,this.accounts);
-        addTransactionToAccountSpinner.setAdapter(accountSpinnerAdapter);
+        addTransactionFromAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
 }
