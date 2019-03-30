@@ -23,7 +23,10 @@ import com.taracamp.financeplanner.Models.Enums.TransactionTypeEnum;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
+import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,12 +34,17 @@ import java.util.List;
 public class AddTransactionPositiveFragment extends Fragment {
 
     /**#############################################################################################
+     * Constants
+     *############################################################################################*/
+    private final static int DECIMAL_NUMBER = 2;
+
+    /**#############################################################################################
      * Controls
      *############################################################################################*/
         private EditText addTransactionNameEditText;
         private Button addTransactionOpenTemplatesButton;
         private EditText addTransactionDescriptionEditText;
-        private EditText addTransactionValueTextInputEditText;
+        private EasyMoneyEditText addTransactionValueMoneyEditText;
         private Spinner addTransactionToAccountSpinner;
         private Switch addTransactionForcastSwitch;
         private EditText addTransactionForecastDateEditText;
@@ -113,11 +121,13 @@ public class AddTransactionPositiveFragment extends Fragment {
         this.addTransactionNameEditText = view.findViewById(R.id.addTransactionNameEditText);
         this.addTransactionOpenTemplatesButton = view.findViewById(R.id.addTransactionOpenTemplatesButton);
         this.addTransactionDescriptionEditText = view.findViewById(R.id.addTransactionDescriptionEditText);
-        this.addTransactionValueTextInputEditText = view.findViewById(R.id.addTransactionValueTextInputEditText);
+        this.addTransactionValueMoneyEditText = view.findViewById(R.id.addTransactionValueMoneyEditText);
         this.addTransactionToAccountSpinner = view.findViewById(R.id.addTransactionToAccountSpinner);
         this.addTransactionForcastSwitch = view.findViewById(R.id.addTransactionForcastSwitch);
         this.addTransactionForecastDateEditText = view.findViewById(R.id.addTransactionForecastDateEditText);
         this.addTransactionPositiveButton = view.findViewById(R.id.addTransactionPositiveButton);
+
+        this._configurationMoneyEditText();
         this._initializeControlEvents();
     }
 
@@ -143,7 +153,7 @@ public class AddTransactionPositiveFragment extends Fragment {
     private Transaction _getTransaction(){
         Transaction newTransaction = new Transaction();
         newTransaction.setTransactionName(this.addTransactionNameEditText.getText().toString());
-        newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
+        newTransaction.setTransactionValue(this._getDoubleValue(this.addTransactionValueMoneyEditText.getValueString()));
         newTransaction.setTransactionDate(new Date());
         newTransaction.setTransactionCreateDate(new Date());
         newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
@@ -155,6 +165,17 @@ public class AddTransactionPositiveFragment extends Fragment {
         return newTransaction;
     }
 
+    private Double _getDoubleValue(String value){
+        BigDecimal decimalNumber = new BigDecimal(Double.parseDouble(value));
+        return decimalNumber.setScale(DECIMAL_NUMBER,RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private void _configurationMoneyEditText(){
+        this.addTransactionValueMoneyEditText.setCurrency("€");
+        this.addTransactionValueMoneyEditText.showCurrencySymbol();
+        this.addTransactionValueMoneyEditText.hideCommas();
+    }
+
     private boolean _checkTransactionValidation(Transaction transaction){
         //// TODO: 11.03.2019 Muss noch implementiert werden
         return true;
@@ -162,9 +183,12 @@ public class AddTransactionPositiveFragment extends Fragment {
 
     private void _changeAccountValueByTransaction(Transaction transaction){
         Account account = transaction.getTransactionToAccount();
-        Double oldValue = account.getAccountValue();
-        account.setAccountValue(oldValue + transaction.getTransactionValue());
 
+        BigDecimal oldValue = new BigDecimal(account.getAccountValue());
+        BigDecimal transactionValue = new BigDecimal(transaction.getTransactionValue());
+        BigDecimal newValue = oldValue.add(transactionValue).setScale(DECIMAL_NUMBER, RoundingMode.HALF_UP);
+
+        account.setAccountValue(newValue.doubleValue());
         this.accounts.set(this.addTransactionToAccountSpinner.getSelectedItemPosition(),account);
     }
 
@@ -172,4 +196,5 @@ public class AddTransactionPositiveFragment extends Fragment {
         AccountSpinnerAdapter accountSpinnerAdapter = new AccountSpinnerAdapter(getActivity(),android.R.layout.simple_spinner_item,this.accounts);
         addTransactionToAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
+
 }

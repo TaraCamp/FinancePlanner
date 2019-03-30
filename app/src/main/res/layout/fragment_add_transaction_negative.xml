@@ -71,8 +71,8 @@
                 android:paddingTop="15dp"
                 android:visibility="gone"/>
 
-            <EditText
-                android:id="@+id/addTransactionNegativeValueTextInputEditText"
+            <com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText
+                android:id="@+id/addTransactionNegativeValueMoneyEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -81,8 +81,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/input_plan_background"
                 android:ems="10"
-                android:hint="Transaktion Wert ..."
-                android:inputType="textPersonName"
+                android:inputType="numberDecimal"
                 android:paddingBottom="15dp"
                 android:paddingLeft="25dp"
                 android:paddingRight="25dp"

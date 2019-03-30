@@ -23,7 +23,10 @@ import com.taracamp.financeplanner.Models.Enums.TransactionTypeEnum;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
+import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,12 +34,17 @@ import java.util.List;
 public class AddTransactionNegativeFragment extends Fragment {
 
     /**#############################################################################################
+     * Constants
+     *############################################################################################*/
+    private final static int DECIMAL_NUMBER = 2;
+
+    /**#############################################################################################
      * Controls
      *############################################################################################*/
     private EditText addTransactionNegativeNameEditText;
     private Button addTransactionNegativeOpenTemplatesButton;
     private EditText addTransactionNegativeDescriptionEditText;
-    private EditText addTransactionNegativeValueTextInputEditText;
+    private EasyMoneyEditText addTransactionNegativeValueMoneyEditText;
     private Spinner addTransactionFromAccountSpinner;
     private Switch addTransactionNegativeForcastSwitch;
     private EditText addTransactionNegativeForecastDateEditText;
@@ -87,11 +95,13 @@ public class AddTransactionNegativeFragment extends Fragment {
         this.addTransactionNegativeNameEditText = view.findViewById(R.id.addTransactionNegativeNameEditText);
         this.addTransactionNegativeOpenTemplatesButton = view.findViewById(R.id.addTransactionNegativeOpenTemplatesButton);
         this.addTransactionNegativeDescriptionEditText = view.findViewById(R.id.addTransactionNegativeDescriptionEditText);
-        this.addTransactionNegativeValueTextInputEditText = view.findViewById(R.id.addTransactionNegativeValueTextInputEditText);
         this.addTransactionFromAccountSpinner = view.findViewById(R.id.addTransactionFromAccountSpinner);
         this.addTransactionNegativeForcastSwitch = view.findViewById(R.id.addTransactionNegativeForcastSwitch);
         this.addTransactionNegativeForecastDateEditText = view.findViewById(R.id.addTransactionNegativeForecastDateEditText);
         this.addTransactionNegativeButton = view.findViewById(R.id.addTransactionNegativeButton);
+        this.addTransactionNegativeValueMoneyEditText = view.findViewById(R.id.addTransactionNegativeValueMoneyEditText);
+
+        this._configurationMoneyEditText();
         this._initializeControlEvents();
     }
 
@@ -123,6 +133,7 @@ public class AddTransactionNegativeFragment extends Fragment {
      *############################################################################################*/
     private void _addTransaction(){
         Transaction transaction = this._getTransaction();
+
         if (_checkTransactionValidation(transaction)){
             this.transactions.add(transaction);
             this.currentUser.setTransactions(this.transactions);
@@ -140,16 +151,27 @@ public class AddTransactionNegativeFragment extends Fragment {
     private Transaction _getTransaction(){
         Transaction newTransaction = new Transaction();
         newTransaction.setTransactionName(this.addTransactionNegativeNameEditText.getText().toString());
-        newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionNegativeValueTextInputEditText.getText().toString()));
+        newTransaction.setTransactionValue(this._getDoubleValue(this.addTransactionNegativeValueMoneyEditText.getValueString()));
         newTransaction.setTransactionDate(new Date());
         newTransaction.setTransactionCreateDate(new Date());
-        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionFromAccountSpinner.getSelectedItemPosition()));
-        newTransaction.setTransactionType(TransactionTypeEnum.POSITIVE.toString());
+        newTransaction.setTransactionFromAccount(accounts.get(this.addTransactionFromAccountSpinner.getSelectedItemPosition()));
+        newTransaction.setTransactionType(TransactionTypeEnum.NEGATIVE.toString());
         newTransaction.setTransactionDescription(this.addTransactionNegativeDescriptionEditText.getText().toString());
         newTransaction.setTransactionForecast(isForecastEnabled);
         //newTransaction.setTransactionCategory(null); //// TODO: 27.03.2019 überprüfen ob notwendig
 
         return newTransaction;
+    }
+
+    private Double _getDoubleValue(String value){
+        BigDecimal decimalNumber = new BigDecimal(Double.parseDouble(value));
+        return decimalNumber.setScale(DECIMAL_NUMBER,RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private void _configurationMoneyEditText(){
+        this.addTransactionNegativeValueMoneyEditText.setCurrency("€");
+        this.addTransactionNegativeValueMoneyEditText.showCurrencySymbol();
+        this.addTransactionNegativeValueMoneyEditText.hideCommas();
     }
 
     private boolean _checkTransactionValidation(Transaction transaction){
@@ -158,11 +180,19 @@ public class AddTransactionNegativeFragment extends Fragment {
     }
 
     private void _changeAccountValueByTransaction(Transaction transaction){
+        Account account = transaction.getTransactionFromAccount();
 
+        BigDecimal oldValue = new BigDecimal(account.getAccountValue());
+        BigDecimal transactionValue = new BigDecimal(transaction.getTransactionValue());
+        BigDecimal newValue = oldValue.subtract(transactionValue).setScale(DECIMAL_NUMBER, RoundingMode.HALF_UP);
+
+        account.setAccountValue(newValue.doubleValue());
+        this.accounts.set(this.addTransactionFromAccountSpinner.getSelectedItemPosition(),account);
     }
 
     private void _loadAccountSpinner(){
         AccountSpinnerAdapter accountSpinnerAdapter = new AccountSpinnerAdapter(getActivity(),android.R.layout.simple_spinner_item,this.accounts);
         addTransactionFromAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
+
 }
