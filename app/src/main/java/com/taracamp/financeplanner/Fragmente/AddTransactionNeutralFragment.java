@@ -23,7 +23,10 @@ import com.taracamp.financeplanner.Models.Enums.TransactionTypeEnum;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
+import com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,16 +34,19 @@ import java.util.List;
 public class AddTransactionNeutralFragment extends Fragment {
 
     /**#############################################################################################
+     * Constants
+     *############################################################################################*/
+    private final static int DECIMAL_NUMBER = 2;
+
+    /**#############################################################################################
      * Controls
      *############################################################################################*/
     private EditText addTransactionNeutralNameEditText;
     private Button addTransactionNeutralOpenTemplatesButton;
     private EditText addTransactionNeutralDescriptionEditText;
-    private EditText addTransactionNeutralValueTextInputEditText;
+    private EasyMoneyEditText addTransactionNeutralValueMoneyEditText;
     private Spinner addTransactionNeutralToAccountSpinner;
-    private Spinner getAddTransactionNeutralFromoAccountSpinner;
-    private Switch addTransactionNeutralForcastSwitch;
-    private EditText addTransactionNeutralForecastDateEditText;
+    private Spinner addTransactionNeutralFromAccountSpinner;
     private Button addTransactionTransferButton;
 
     /**#############################################################################################
@@ -75,34 +81,50 @@ public class AddTransactionNeutralFragment extends Fragment {
      *############################################################################################*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_transaction_neutral, container, false);
+        final View view = inflater.inflate(R.layout.fragment_add_transaction_neutral, container, false);
+        this._initializeControls(view);
+        this._loadAccountSpinner();
+        return view;
     }
 
     /**#############################################################################################
      * Control Events
      *############################################################################################*/
     private void _initializeControlEvents(){
-
+        this.addTransactionTransferButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _transfer();
+            }
+        });
     }
 
     private void _initializeControls(View view){
+        this.addTransactionNeutralNameEditText = view.findViewById(R.id.addTransactionNeutralNameEditText);
+        this.addTransactionNeutralOpenTemplatesButton  = view.findViewById(R.id.addTransactionNeutralOpenTemplatesButton);
+        this.addTransactionNeutralValueMoneyEditText = view.findViewById(R.id.addTransactionNeutralValueMoneyEditText);
+        this.addTransactionNeutralToAccountSpinner = view.findViewById(R.id.addTransactionNeutralToAccountSpinner);
+        this.addTransactionNeutralFromAccountSpinner = view.findViewById(R.id.addTransactionNeutralFromAccountSpinner);
+        this.addTransactionTransferButton = view.findViewById(R.id.addTransactionTransferButton);
+        this._configurationMoneyEditText();
         this._initializeControlEvents();
     }
 
     /**#############################################################################################
      * Private Methods
      *############################################################################################*/
-    private void _addTransaction(){
+    private void _transfer(){
         Transaction transaction = this._getTransaction();
         if (_checkTransactionValidation(transaction)){
             this.transactions.add(transaction);
             this.currentUser.setTransactions(this.transactions);
+
             this._changeAccountValueByTransaction(transaction);
+
             this.currentUser.setAccounts(this.accounts);
 
             if (this.firebaseManager.saveObject(this.currentUser)){
-                Message.show(getActivity(),"Eine neue Transaktion wurde angelegt", Message.Mode.SUCCESS);
+                Message.show(getActivity(),"Transfer wurde angewendet", Message.Mode.SUCCESS);
             }else{
                 Message.show(getActivity(),"Transaktion konnte nicht angelegt werden", Message.Mode.ERROR);
             }
@@ -112,10 +134,11 @@ public class AddTransactionNeutralFragment extends Fragment {
     private Transaction _getTransaction(){
         Transaction newTransaction = new Transaction();
         newTransaction.setTransactionName(this.addTransactionNeutralNameEditText.getText().toString());
-        //newTransaction.setTransactionValue(Double.parseDouble(this.addTransactionValueTextInputEditText.getText().toString()));
+        newTransaction.setTransactionValue(this._getDoubleValue(this.addTransactionNeutralValueMoneyEditText.getValueString()));
         newTransaction.setTransactionDate(new Date());
         newTransaction.setTransactionCreateDate(new Date());
-        //newTransaction.setTransactionToAccount(accounts.get(this.addTransactionToAccountSpinner.getSelectedItemPosition()));
+        newTransaction.setTransactionFromAccount(accounts.get(this.addTransactionNeutralFromAccountSpinner.getSelectedItemPosition()));
+        newTransaction.setTransactionToAccount(accounts.get(this.addTransactionNeutralToAccountSpinner.getSelectedItemPosition()));
         newTransaction.setTransactionType(TransactionTypeEnum.NEUTRAL.toString());
         //newTransaction.setTransactionDescription(this.addTransactionDescriptionEditText.getText().toString());
         //newTransaction.setTransactionForecast(isForecastEnabled);
@@ -124,28 +147,44 @@ public class AddTransactionNeutralFragment extends Fragment {
         return newTransaction;
     }
 
+    private Double _getDoubleValue(String value){
+        BigDecimal decimalNumber = new BigDecimal(Double.parseDouble(value));
+        return decimalNumber.setScale(DECIMAL_NUMBER, RoundingMode.HALF_UP).doubleValue();
+    }
+
     private boolean _checkTransactionValidation(Transaction transaction){
         //// TODO: 11.03.2019 Muss noch implementiert werden
         return true;
     }
 
+    private void _configurationMoneyEditText(){
+        this.addTransactionNeutralValueMoneyEditText.setCurrency("€");
+        this.addTransactionNeutralValueMoneyEditText.showCurrencySymbol();
+        this.addTransactionNeutralValueMoneyEditText.hideCommas();
+    }
+
     private void _changeAccountValueByTransaction(Transaction transaction){
-        Account accountTo = transaction.getTransactionToAccount();
         Account accountFrom = transaction.getTransactionFromAccount();
+        Account accountTo = transaction.getTransactionToAccount();
 
-        Double accountFromTotalValue = accountFrom.getAccountValue();
-        Double accountToTotalValue = accountTo.getAccountValue();
+        BigDecimal accountFromTotalValue = new BigDecimal(accountFrom.getAccountValue());
+        BigDecimal accountToTotalValue = new BigDecimal(accountTo.getAccountValue());
 
-        accountFrom.setAccountValue(accountFromTotalValue - transaction.getTransactionValue());
-        accountTo.setAccountValue(accountToTotalValue + transaction.getTransactionValue());
+        BigDecimal transactionValue = new BigDecimal(transaction.getTransactionValue());
 
+        BigDecimal newAccountFromTotalValue = accountFromTotalValue.subtract(transactionValue).setScale(DECIMAL_NUMBER, RoundingMode.HALF_UP);
+        BigDecimal newAccountToTotalValue = accountToTotalValue.add(transactionValue).setScale(DECIMAL_NUMBER, RoundingMode.HALF_UP);
 
+        accountFrom.setAccountValue(newAccountFromTotalValue.doubleValue());
+        accountTo.setAccountValue(newAccountToTotalValue.doubleValue());
+
+        this.accounts.set(this.addTransactionNeutralFromAccountSpinner.getSelectedItemPosition(),accountFrom);
         this.accounts.set(this.addTransactionNeutralToAccountSpinner.getSelectedItemPosition(),accountTo);
-        // der andere auch noch?
     }
 
     private void _loadAccountSpinner(){
-       // AccountSpinnerAdapter accountSpinnerAdapter = new AccountSpinnerAdapter(getActivity(),android.R.layout.simple_spinner_item,this.accounts);
-       // addTransactionToAccountSpinner.setAdapter(accountSpinnerAdapter);
+       AccountSpinnerAdapter accountSpinnerAdapter = new AccountSpinnerAdapter(getActivity(),android.R.layout.simple_spinner_item,this.accounts);
+       this.addTransactionNeutralFromAccountSpinner.setAdapter(accountSpinnerAdapter);
+       this.addTransactionNeutralToAccountSpinner.setAdapter(accountSpinnerAdapter);
     }
 }

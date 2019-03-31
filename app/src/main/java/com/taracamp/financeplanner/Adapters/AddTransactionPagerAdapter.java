@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Fragmente.AddTransactionNegativeFragment;
+import com.taracamp.financeplanner.Fragmente.AddTransactionNeutralFragment;
 import com.taracamp.financeplanner.Fragmente.AddTransactionPositiveFragment;
 import com.taracamp.financeplanner.Models.User;
 
@@ -27,7 +28,7 @@ public class AddTransactionPagerAdapter extends FragmentPagerAdapter {
         {
             case 0 : return AddTransactionPositiveFragment.newInstance(firebaseManager,currentUser);
             case 1 : return AddTransactionNegativeFragment.newInstance(firebaseManager,currentUser);
-            case 2 : return AddTransactionPositiveFragment.newInstance(firebaseManager,currentUser);
+            case 2 : return AddTransactionNeutralFragment.newInstance(firebaseManager,currentUser);
             default: return null;
         }
     }
