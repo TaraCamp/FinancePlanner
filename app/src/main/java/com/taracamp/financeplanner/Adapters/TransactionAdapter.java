@@ -15,10 +15,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.taracamp.financeplanner.Core.FirebaseManager;
+import com.taracamp.financeplanner.Fragmente.Dialogs.TransactionDialogFragment;
 import com.taracamp.financeplanner.MainActivity;
 import com.taracamp.financeplanner.Models.Transaction;
 import com.taracamp.financeplanner.R;
 import com.taracamp.financeplanner.TransactionDetailActivity;
+import com.taracamp.financeplanner.TransactionsActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,14 +36,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
      *############################################################################################*/
     private List<Transaction> transactions;
     private Context parentContext;
-    private MainActivity parentActivity;
+    private TransactionsActivity parentActivity;
+    private FirebaseManager firebaseManager;
 
     /**#############################################################################################
      * Constructor
      *############################################################################################*/
-    public TransactionAdapter(Context context,List<Transaction> myDataset) {
-        this.parentContext = context;
+    public TransactionAdapter(TransactionsActivity context, List<Transaction> myDataset, FirebaseManager manager) {
+        this.parentActivity = context;
         this.transactions = myDataset;
+        this.firebaseManager = manager;
     }
 
     /**#############################################################################################
@@ -49,12 +54,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public TransactionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_card,parent,false);
-        return new ViewHolder(view);
+        return new ViewHolder(view,this.parentActivity);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        Transaction transaction = this.transactions.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final Transaction transaction = this.transactions.get(position);
 
         //ImageView transactionCardImageView = holder.transactionCardImageView;
         TextView transactionNameCardTextView = holder.transactionNameCardTextView;
@@ -81,6 +86,19 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                 Intent intent = new Intent(parentContext.getApplicationContext(), TransactionDetailActivity.class);
                 intent.putExtra("POSITION",position);
                 parentContext.startActivity(intent);
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v)
+            {
+                final String a = "transaction";
+                TransactionDialogFragment dialog = TransactionDialogFragment.newInstance(firebaseManager,transaction);
+                dialog.show(holder.transactionsActivity.getSupportFragmentManager(),"taskaction");
+
+                return true;
             }
         });
     }
@@ -114,15 +132,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
      *############################################################################################*/
     public class ViewHolder extends RecyclerView.ViewHolder
     {
+        private TransactionsActivity transactionsActivity;
+
         private CircleImageView transactionCardImageView;
         private TextView transactionNameCardTextView;
         private TextView transactionDescriptionCardTextView;
         private TextView transactionValueCardTextView;
 
-        public ViewHolder(View itemView)
+        public ViewHolder(View itemView, TransactionsActivity _transactionsActivity)
         {
             super(itemView);
 
+            this.transactionsActivity = _transactionsActivity;
             this.transactionCardImageView = itemView.findViewById(R.id.transactionCardImageView);
             this.transactionNameCardTextView = itemView.findViewById(R.id.transactionNameCardTextView);
             this.transactionDescriptionCardTextView = itemView.findViewById(R.id.transactionDescriptionCardTextView);

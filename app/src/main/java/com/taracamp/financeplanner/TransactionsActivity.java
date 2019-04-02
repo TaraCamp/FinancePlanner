@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -155,7 +156,9 @@ public class TransactionsActivity extends AppCompatActivity {
     private void _loadRecyclerViewData(){
         this.transactionsRecyclerView.setHasFixedSize(true);
         this.transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.mAdapter = new TransactionAdapter(getApplicationContext(),currentUser.getTransactions());
+        this.transactionsRecyclerView.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
+        this.transactionsRecyclerView.setHasFixedSize(true);
+        this.mAdapter = new TransactionAdapter(this,currentUser.getTransactions(),firebaseManager);
         this.transactionsRecyclerView.setAdapter(this.mAdapter);
     }
 

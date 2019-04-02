@@ -13,4 +13,6 @@
     <color name="textTabBright">#ffffff</color>
     <color name="textTabLight">#FFB08B</color>
     <color name="outline_gray">#cccccc</color>
+    <color name="iron">#CCCCCC</color>
+    <color name="primary">#E43F3F</color>
 </resources>

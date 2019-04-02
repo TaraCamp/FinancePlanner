@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Models.User;
 
-public class TransactionDetailActivity extends AppCompatActivity {
+public class                 TransactionDetailActivity extends AppCompatActivity {
 
     /**#############################################################################################
      * Controls

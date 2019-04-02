@@ -149,8 +149,8 @@ public class MainActivity extends AppCompatActivity {
      *############################################################################################*/
     private void _loadData(User currentUser){
         this._initializeControls();
-        this.mAdapter = new TransactionAdapter(getApplicationContext(),currentUser.getTransactions());
-        this.recyclerView.setAdapter(this.mAdapter);
+        //this.mAdapter = new TransactionAdapter(this,firebaseManager,currentUser.getTransactions());
+        //this.recyclerView.setAdapter(this.mAdapter);
 
         Collections.reverse(currentUser.getTransactions());
         Double totalValue = _getTotalValue(currentUser.getAccounts());
