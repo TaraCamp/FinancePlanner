@@ -21,26 +21,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/googleg_standard_color_18"
-                    android:layout_gravity="center"/>
-
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/tasks_task_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:text="Aufgabe Anzeigen"
-                    android:layout_gravity="center"
-                    />
+                <EditText
+                    android:id="@+id/transactionDialogTransactionValueEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -49,129 +35,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/transactionDialogChangeButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/googleg_standard_color_18"
-                    android:layout_gravity="center"/>
-
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/tasks_task_setFinish"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:text="Auf 'Erledigt' setzen"
-                    android:layout_gravity="center"
-                    />
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingLeft="25dp"
+                    android:paddingRight="25dp"
+                    android:paddingTop="15dp"
+                    android:background="@drawable/accept_color_button"
+                    android:text="Ändern"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/googleg_standard_color_18"
-                    android:layout_gravity="center"/>
-
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/tasks_task_setInProcess"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:text="Auf 'In Bearbeitung' setzen"
-                    android:layout_gravity="center"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/googleg_standard_color_18"
-                    android:layout_gravity="center"/>
-
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/tasks_task_setOnWaiting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:text="Auf 'Warten' setzen"
-                    android:layout_gravity="center"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/googleg_standard_color_18"
-                    android:layout_gravity="center"/>
-
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/tasks_task_remove"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:text="Aufgabe Entfernen"
-                    android:layout_gravity="center"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/googleg_standard_color_18"
-                    android:layout_gravity="center"/>
-
-                <Space
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/tasks_task_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:text="Schließen"
-                    android:layout_gravity="center"/>
-
-            </LinearLayout>
 
         </LinearLayout>
 

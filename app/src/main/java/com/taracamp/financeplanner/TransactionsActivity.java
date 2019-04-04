@@ -158,7 +158,7 @@ public class TransactionsActivity extends AppCompatActivity {
         this.transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.transactionsRecyclerView.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
         this.transactionsRecyclerView.setHasFixedSize(true);
-        this.mAdapter = new TransactionAdapter(this,currentUser.getTransactions(),firebaseManager);
+        this.mAdapter = new TransactionAdapter(this,currentUser.getTransactions(),firebaseManager,currentUser);
         this.transactionsRecyclerView.setAdapter(this.mAdapter);
     }
 

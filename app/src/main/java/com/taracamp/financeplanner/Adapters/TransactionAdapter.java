@@ -19,6 +19,7 @@ import com.taracamp.financeplanner.Core.FirebaseManager;
 import com.taracamp.financeplanner.Fragmente.Dialogs.TransactionDialogFragment;
 import com.taracamp.financeplanner.MainActivity;
 import com.taracamp.financeplanner.Models.Transaction;
+import com.taracamp.financeplanner.Models.User;
 import com.taracamp.financeplanner.R;
 import com.taracamp.financeplanner.TransactionDetailActivity;
 import com.taracamp.financeplanner.TransactionsActivity;
@@ -38,14 +39,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private Context parentContext;
     private TransactionsActivity parentActivity;
     private FirebaseManager firebaseManager;
+    private User currentUser;
 
     /**#############################################################################################
      * Constructor
      *############################################################################################*/
-    public TransactionAdapter(TransactionsActivity context, List<Transaction> myDataset, FirebaseManager manager) {
+    public TransactionAdapter(TransactionsActivity context, List<Transaction> myDataset, FirebaseManager manager, User currentUser) {
         this.parentActivity = context;
         this.transactions = myDataset;
         this.firebaseManager = manager;
+        this.currentUser = currentUser;
     }
 
     /**#############################################################################################
@@ -94,10 +97,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             @Override
             public boolean onLongClick(View v)
             {
-                final String a = "transaction";
-                TransactionDialogFragment dialog = TransactionDialogFragment.newInstance(firebaseManager,transaction);
-                dialog.show(holder.transactionsActivity.getSupportFragmentManager(),"taskaction");
-
+                TransactionDialogFragment dialog = TransactionDialogFragment.newInstance(firebaseManager,transaction,currentUser,position);
+                dialog.show(holder.transactionsActivity.getSupportFragmentManager(),"transaction");
                 return true;
             }
         });
